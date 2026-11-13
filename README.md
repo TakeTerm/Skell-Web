@@ -13,17 +13,17 @@
   <a href="#repository-structure">Source structure</a>
 </p>
 
-![Skell Client homepage with the interactive mods menu preview](readme/hero.png)
+![Skell Client homepage with the interactive mods menu preview](readme/hero.jpg)
 
 ## Overview
 
 I built Skell Web to give players a clear introduction to Skell Client, my independently developed Fabric client for Minecraft. The site brings the product overview, interactive interface previews, and user guides together so visitors can understand the client and try its main controls before installing it.
 
-This repository contains the website for Skell Client **0.15.1**. I designed the presentation around the client’s glass-style interface and customizable HUD. The landing page explains how the interface, visuals, cosmetics, music, captures, and utilities fit into the client. Each section links to the guide that covers the feature in more detail.
+This repository contains the website for Skell Client **0.15.1**. I designed the landing page around a monochrome backdrop and an interactive settings panel, with direct access to the browser demos and guides. The landing page explains how the interface, visuals, cosmetics, music, captures, and utilities fit into the client. Each section links to the guide that covers the feature in more detail.
 
 ## Interactive preview
 
-I recreated key parts of the client interface for the browser and used the same module catalog to populate the mods menu. The preview is intended to show how settings are organized and how common interactions feel. Game-dependent visuals, including the kill effects, are approximated in the browser.
+I built the settings preview at the top of the homepage with category filters, a search box, favourites, light and dark themes, and display controls. In the interactive studio below the features, I use the same module catalog to populate the full mods menu. The preview is intended to show how settings are organized and how common interactions feel. Game-dependent visuals, including the kill effects, are approximated in the browser.
 
 | Preview | What I made available in the browser |
 | --- | --- |
@@ -56,8 +56,8 @@ I organized the documentation by task, from getting started and learning the con
 I maintain English and Spanish editions of the landing page and documentation. English is served at `/` and Spanish at `/es/`. I also designed the navigation for narrow screens and included reduced-motion styles for visitors who prefer them.
 
 <p align="center">
-  <img src="readme/hero-es.png" width="59%" alt="Spanish edition of the Skell Client homepage">
-  <img src="readme/mobile-hero.png" width="18%" alt="Skell Client homepage on a phone">
+  <img src="readme/hero-es.jpg" width="59%" alt="Spanish edition of the Skell Client homepage">
+  <img src="readme/mobile-hero.jpg" width="18%" alt="Skell Client homepage on a phone">
   <img src="readme/mobile-docs.png" width="18%" alt="Skell Client documentation on a phone">
 </p>
 
@@ -66,6 +66,12 @@ I maintain English and Spanish editions of the landing page and documentation. E
 I generate the website with Python’s standard library. The build reads configuration, localized content, and the module catalog, then produces static HTML, CSS, JavaScript, and assets under `site/`. I use native JavaScript modules for the browser interactions and load the demos as they approach the viewport. The build also generates the sitemap, language alternates, and a bilingual 404 page.
 
 I keep the content and browser source separate so I can update copy, translations, and guides without editing generated HTML. The website build uses Python. The Java and Fabric versions below apply to the Minecraft client.
+
+## Website sections
+
+I built dedicated pages for pricing and checkout, account access, creator partnerships, the press kit, the knowledge base, and project information. Account access uses a temporary browser session. Checkout displays a sample order, and partnership submissions stay in the browser as drafts.
+
+In Studio, I can browse the included texture samples or import the textures from my own Minecraft Java client JAR or resource-pack ZIP. I can edit pixels, save a draft, download individual images, and export a resource-pack ZIP for Minecraft 1.21.11. The press kit exports the Skell mark as SVG, PNG, or JPG.
 
 ## Run the site locally
 
@@ -117,6 +123,6 @@ The generated pages use root-relative paths for assets and navigation. Serve the
 
 I maintain Skell Web independently. If you find a problem, [open an issue](https://github.com/TakeTerm/Skell-Web/issues) with the affected page, your browser, and the steps to reproduce it. For a translation issue, include the language and the text that needs attention.
 
-I use Bricolage Grotesque, Inter, and JetBrains Mono under the SIL Open Font License. Their license texts are included in [`src/assets/fonts/`](src/assets/fonts/).
+I use Bricolage Grotesque, Instrument Serif, Inter, and JetBrains Mono under the SIL Open Font License. Their license texts are included in [`src/assets/fonts/`](src/assets/fonts/).
 
 © 2026 Take. All rights reserved. The Skell Client name, logo, website content, interface designs, and source code may be reproduced, distributed, or used only with my prior written permission. Third-party fonts retain their respective licenses.

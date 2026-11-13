@@ -1,7 +1,4 @@
-import { prefersReducedMotion } from "./strings.js";
-
 const SCROLL_THRESHOLD = 12;
-const TILT_RANGE = 5;
 const FOCUSABLE = "a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex='-1'])";
 
 function trackScroll(header) {
@@ -80,25 +77,6 @@ function followPointerOnButtons() {
   });
 }
 
-function tiltHeroPreview() {
-  const stage = document.querySelector("[data-hero-stage]");
-  if (!stage || prefersReducedMotion() || !matchMedia("(hover: hover)").matches) return;
-  const frame = stage.querySelector(".hero__frame");
-  stage.addEventListener("pointermove", (event) => {
-    const box = stage.getBoundingClientRect();
-    const x = (event.clientX - box.left) / box.width - 0.5;
-    const y = (event.clientY - box.top) / box.height - 0.5;
-    stage.style.setProperty("--ry", `${x * TILT_RANGE}deg`);
-    stage.style.setProperty("--rx", `${-y * TILT_RANGE}deg`);
-    stage.style.setProperty("--px", x.toFixed(3));
-    stage.style.setProperty("--py", y.toFixed(3));
-  });
-  stage.addEventListener("pointerleave", () => {
-    ["--rx", "--ry", "--px", "--py"].forEach((name) => stage.style.removeProperty(name));
-  });
-  frame.style.willChange = "transform";
-}
-
 function rememberLanguageChoice() {
   document.addEventListener("click", (event) => {
     const choice = event.target.closest?.("[data-language-choice]");
@@ -111,12 +89,6 @@ function rememberLanguageChoice() {
   });
 }
 
-function removeIntroWhenDone() {
-  const intro = document.querySelector("[data-intro]");
-  if (!intro) return;
-  intro.addEventListener("animationend", (event) => event.animationName === "intro-gone" && intro.remove());
-}
-
 export function initShell() {
   const header = document.querySelector("[data-header]");
   if (header) {
@@ -125,7 +97,5 @@ export function initShell() {
   }
   revealOnScroll();
   followPointerOnButtons();
-  tiltHeroPreview();
   rememberLanguageChoice();
-  removeIntroWhenDone();
 }

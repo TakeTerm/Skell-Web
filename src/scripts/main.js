@@ -15,8 +15,16 @@ const FEATURES = [
 
 initShell();
 
-for (const [selector, path] of FEATURES) {
-  for (const element of document.querySelectorAll(selector)) {
-    whenNearViewport(element, () => import(path).then((module) => module.init(element)));
+const initialized = new WeakSet();
+
+export function initFeatures(root = document) {
+  for (const [selector, path] of FEATURES) {
+    for (const element of root.querySelectorAll(selector)) {
+      if (initialized.has(element)) continue;
+      initialized.add(element);
+      whenNearViewport(element, () => import(path).then((module) => module.init(element)));
+    }
   }
 }
+
+initFeatures();

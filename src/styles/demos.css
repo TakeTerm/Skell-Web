@@ -1106,9 +1106,6 @@
 }
 
 @media (max-width: 699px) {
-  .hero__frame .skui__grid .skcard:nth-child(n + 5) {
-    display: none;
-  }
 
   .demo__panels {
     min-height: 0;
