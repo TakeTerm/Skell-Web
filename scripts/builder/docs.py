@@ -255,9 +255,8 @@ def build_doc(site, entry, guides, modules, translate, demo, landing):
         title,
         description,
         layout,
-        ["site.css", "docs.css"],
-        ["scripts/main.js"],
-        active_section="docs",
+        ["site.css", "frontpage.css", "portal.css", "docs.css"],
+        ["scripts/main.js", "scripts/frontpage.js", "scripts/portal.js"],
         main_class="docs-page",
     )
 
@@ -294,8 +293,7 @@ def build_docs_index(site, guides):
         strings["title"],
         site.interface["docsIndex"]["lead"],
         body,
-        ["site.css", "docs.css"],
-        ["scripts/main.js"],
-        active_section="docs",
+        ["site.css", "frontpage.css", "portal.css", "docs.css"],
+        ["scripts/main.js", "scripts/frontpage.js", "scripts/portal.js"],
         main_class="docs-page",
     )

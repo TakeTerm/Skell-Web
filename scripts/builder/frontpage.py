@@ -10,8 +10,7 @@ COPY = {
         "headline": ("Skell changes", "the game"),
         "lead": "An independent Minecraft client with a customizable interface, refined visuals, and tools that fit the way you play.",
         "explore": "Explore Skell",
-        "nav": ("Features", "Access", "Project", "Studio", "Contact", "Documentation", "Getting started"),
-        "projectMenu": ("Project status", "Changelog", "Credits"),
+        "nav": ("Features", "Studio", "Contact"),
         "studioMenu": ("Mods menu", "HUD editor", "Module reference"),
         "preview": {
             "categories": "Client categories", "search": "Search",
@@ -33,15 +32,9 @@ COPY = {
             ("Visual Effects", "Preview effects, adjust their appearance, and shape the look of your game."),
             ("Music & Captures", "Keep lyrics, recordings, and instant replays within reach."),
         ),
-        "access": ("Client access", "Everything that comes with Skell Client.", "Overview", "Compatibility", "Build details"),
-        "editions": (
-            ("Skell Client", "Client", None, "Current version", "Get started", "docs:getting-started", ("Fabric client", "Custom HUD", "Visual effects", "Music and captures", "Bilingual interface", "Module settings")),
-            ("Interactive Studio", "Browser", "Live", "Web preview", "Try the demo", "home:#studio", ("Interactive menu", "HUD editor", "Kill effects", "Recording controls", "Configurable previews", "Runs in the browser")),
-            ("Documentation", "Guides", "EN / ES", "Two languages", "Read the docs", "docs:", ("Getting started", "Interface guide", "Module reference", "Troubleshooting", "Changelog", "Credits")),
-        ),
         "help": ("Need help?", "Find answers about setup, client features, and the interactive preview."),
         "support": (
-            ("book", "Open the knowledge base", "Setup, controls, and the full module reference.", "Open documentation", "docs:"),
+            ("book", "Open the knowledge base", "Setup, controls, and the full module reference.", "Open knowledge base", "faq"),
             ("wrench", "Troubleshoot a problem", "Find solutions for common setup and launch issues.", "Read troubleshooting", "docs:troubleshooting"),
             ("layout", "Try the interactive studio", "Explore the controls before opening Minecraft.", "Open the demo", "home:#studio"),
             ("info", "Check the latest changes", "Review the changes included in this version.", "Open changelog", "docs:changelog"),
@@ -67,8 +60,7 @@ COPY = {
         "headline": ("Skell cambia", "el juego"),
         "lead": "Un cliente independiente de Minecraft con una interfaz personalizable, efectos visuales y herramientas que se adaptan a tu forma de jugar.",
         "explore": "Explorar Skell",
-        "nav": ("Funciones", "Acceso", "Proyecto", "Estudio", "Ayuda", "Documentación", "Primeros pasos"),
-        "projectMenu": ("Estado del proyecto", "Novedades", "Créditos"),
+        "nav": ("Funciones", "Estudio", "Ayuda"),
         "studioMenu": ("Menú de módulos", "Editor HUD", "Referencia de módulos"),
         "preview": {
             "categories": "Categorías del cliente", "search": "Buscar",
@@ -90,15 +82,9 @@ COPY = {
             ("Efectos visuales", "Previsualiza efectos y ajusta su apariencia antes de aplicarlos."),
             ("Música y capturas", "Accede a letras, grabaciones y repeticiones instantáneas."),
         ),
-        "access": ("Acceso al cliente", "Todo lo que incluye Skell Client.", "Resumen", "Compatibilidad", "Datos de la versión"),
-        "editions": (
-            ("Skell Client", "Cliente", None, "Versión actual", "Primeros pasos", "docs:getting-started", ("Cliente Fabric", "HUD personalizable", "Efectos visuales", "Música y capturas", "Interfaz bilingüe", "Ajustes de módulos")),
-            ("Estudio interactivo", "Navegador", "Demo", "Vista web", "Probar la demo", "home:#studio", ("Menú interactivo", "Editor HUD", "Efectos de eliminación", "Controles de grabación", "Previews configurables", "Funciona en navegador")),
-            ("Documentación", "Guías", "EN / ES", "Dos idiomas", "Leer las guías", "docs:", ("Primeros pasos", "Guía de la interfaz", "Referencia de módulos", "Solución de problemas", "Novedades", "Créditos")),
-        ),
         "help": ("¿Necesitas ayuda?", "Encuentra respuestas sobre instalación, funciones y el estudio interactivo."),
         "support": (
-            ("book", "Abre la base de conocimiento", "Instalación, controles y referencia de módulos.", "Abrir documentación", "docs:"),
+            ("book", "Abre la base de conocimiento", "Instalación, controles y referencia de módulos.", "Abrir base de conocimiento", "faq"),
             ("wrench", "Resuelve un problema", "Soluciones a problemas habituales de instalación e inicio.", "Leer la guía", "docs:troubleshooting"),
             ("layout", "Prueba el estudio interactivo", "Explora los controles antes de abrir Minecraft.", "Abrir demo", "home:#studio"),
             ("info", "Consulta los últimos cambios", "Revisa las novedades de esta versión.", "Ver novedades", "docs:changelog"),
@@ -139,22 +125,32 @@ def dropdown(label, links):
     return tag("details", tag("summary", text(label) + icon("chevron-down", 12)) + tag("div", join(links)), class_="reference-dropdown")
 
 
-def landing_header(site):
+def landing_header(site, page="home"):
     copy = COPY[site.language]
-    features, access, project, studio, contact, docs, start = copy["nav"]
+    es = site.language == "es"
+    features, studio, contact = copy["nav"]
+    access, project, docs, start = ("Precios", "Colaboraciones", "Iniciar sesión", "Registro") if es else ("Pricing", "Partnership", "Sign In", "Registration")
+    home = site.url("home")
     menu_label = site.interface["nav"]["open"]
     languages = [
-        tag("a", label, href=site.url("home", code), hreflang=code, lang=code, data_language_choice=code, aria_current="true" if site.language == code else None)
+        tag("a", label, href=site.url(page, code), hreflang=code, lang=code, data_language_choice=code, aria_current="true" if site.language == code else None)
         for code, label in (("en", "English"), ("es", "Español"))
     ]
     nav = join((
-        link(features, "#features"),
-        link(access, "#project"),
-        dropdown(project, (link(label, site.resolve_link(target)) for label, target in zip(copy["projectMenu"], ("home:#project", "docs:changelog", "docs:credits")))),
-        dropdown(studio, (link(label, site.resolve_link(target)) for label, target in zip(copy["studioMenu"], ("home:#studio", "docs:hud-editor", "docs:modules")))),
-        link(contact, "#contact"),
+        link(features, home + "#features"),
+        link(access, home + "#pricing"),
+        dropdown(project, (link(label, site.url(path)) for label, path in zip(
+            ("Hazte colaborador", "Afiliados", "Material de prensa") if es else ("Become a partner", "Affiliates", "Press kit"),
+            ("partnership/become", "partnership/affiliates", "partnership/press"),
+        ))),
+        dropdown(studio, (
+            link("Texturas" if es else "Every texture", site.url("textures")),
+            link("Editor de paquetes" if es else "Resource pack editor", site.url("resourcepacks")),
+            link("Estudio interactivo" if es else "Interactive studio", home + "#studio"),
+        )),
+        link(contact, home + "#contact"),
     ))
-    actions = dropdown("English" if site.language == "en" else "Español", languages) + link(docs, site.url("docs")) + link(start, site.url("docs/getting-started"), "reference-button", "arrow-right")
+    actions = dropdown("English" if site.language == "en" else "Español", languages) + link(docs, site.url("login")) + link(start, site.url("registration"), "reference-button", "arrow-right")
     mobile = tag("button", icon("menu", 21), class_="reference-menu", type="button", aria_expanded="false", aria_label=menu_label, aria_controls="reference-nav", data_reference_menu=True)
     navigation = tag("nav", tag("div", nav, class_="reference-links") + tag("div", actions, class_="reference-actions"), class_="reference-nav", id="reference-nav", aria_label=site.interface["nav"]["primary"])
     return tag("header", tag("div", brand(site) + navigation + mobile, class_="reference-header__inner"), class_="reference-header", data_header=True)
@@ -290,25 +286,31 @@ def features(site, copy, full_demo):
     return section_wrap("features", section_head(title, lead) + tag("div", join(tiles), class_="reference-tiles") + lab)
 
 
-def access_section(site, copy, launch):
-    title, lead, overview, compatibility, build = copy["access"]
-    config = site.config
+def pricing_section(site):
+    es = site.language == "es"
+    title, lead, demo_note = ("Precios", "Una suscripción, todas las funciones.", "Precios de demostración. No se procesan pagos.") if es else ("Simple Pricing", "One subscription. Every feature.", "Demo prices. Payments are not processed.")
+    methods = ("PayPal", "Card EU", "Crypto", "CryptoBot", "FunPay", "Stars", "SBP", "Card RU", "YooMoney", "ERIP", "Other", "Balance")
+    periods = ("1 mes", "3 meses", "Para siempre") if es else ("1 month", "3 months", "Forever")
+    units = ("Mensual", "Trimestral", "De por vida") if es else ("Monthly", "Quarterly", "Lifetime")
+    features = ("Acceso al cliente", "Actualizaciones", "Ayuda prioritaria", "Todos los módulos", "Configuraciones web") if es else ("Full client access", "Regular updates", "Priority support", "All modules included", "Web configuration storage")
     plans = []
-    for name, badge, value, meta, action, href, inclusions in copy["editions"]:
-        heading = tag("div", tag("span", name) + tag("small", badge), class_="access-card__heading")
-        amount = tag("div", tag("strong", text(value or config["version"])) + tag("span", text(meta)), class_="access-card__amount")
-        versions = tag("div", tag("span", "— Minecraft") + tag("small", config["minecraft"]) + tag("small", "Fabric"), class_="access-card__versions")
-        items = tag("ul", join(tag("li", icon(glyph, 14) + text(label)) for glyph, label in zip(("box", "layout", "sparkles", "video", "book", "sliders"), inclusions)))
-        plans.append(tag("article", heading + amount + versions + items + link(action, site.resolve_link(href), "reference-button access-card__action", "arrow-right"), class_="access-card"))
-    modes = tag("div", tag("button", overview, type="button", data_access_toggle="overview", aria_pressed="true") + tag("button", compatibility, type="button", data_access_toggle="compatibility", aria_pressed="false"), class_="access-toggle")
-    specs = (("Minecraft", config["minecraft"]), ("Fabric Loader", config["fabricLoader"]), ("Fabric API", config["fabricApi"]), ("Java", config["java"]))
-    compatibility_panel = tag("div", tag("h3", build) + tag("dl", join(tag("div", tag("dt", name) + tag("dd", value)) for name, value in specs)), class_="access-specs", data_access_panel="compatibility", hidden=True)
-    return section_wrap("project", section_head(title, lead) + modes + tag("div", join(plans), class_="access-grid", data_access_panel="overview") + compatibility_panel + tag("p", launch, class_="access-note"))
+    for period, unit, amount in zip(periods, units, (8, 20, 70)):
+        heading = tag("div", tag("span", "Skell Client") + tag("small", text(period)), class_="access-card__heading")
+        price = tag("div", tag("strong", f"${amount}", data_price=True) + tag("span", "/" + text(unit)), class_="access-card__amount")
+        versions = tag("div", tag("span", "— Minecraft") + tag("small", site.config["minecraft"]) + tag("small", "Fabric"), class_="access-card__versions")
+        items = tag("ul", join(tag("li", icon(glyph, 14) + text(label)) for glyph, label in zip(("box", "reset", "info", "layout", "folder"), features)))
+        options = tag("div", join(tag("button", text(method), type="button", data_payment_method=method, aria_pressed="true" if index == 0 else "false") for index, method in enumerate(methods)), class_="payment-methods")
+        checkout = tag("button", ("Pagar" if es else "Pay") + f" ${amount} →", class_="reference-button access-card__action", data_checkout=True, type="button")
+        legal = tag("p", link("Condiciones del servicio" if es else "Terms of Service", site.url("legal/terms")), class_="payment-legal")
+        plans.append(tag("article", heading + price + versions + items + tag("p", "— " + ("Método de pago" if es else "Payment method"), class_="payment-label") + options + checkout + legal, class_="access-card", data_plan=period, data_base_price=amount))
+    toggle = tag("div", join(tag("button", text(label), type="button", data_release=key, aria_pressed="true" if index == 0 else "false") for index, (key, label) in enumerate((("stable", "Stable" if not es else "Estable"), ("beta", "Beta")))), class_="access-toggle")
+    dialog = tag("dialog", tag("div", tag("h2", "Checkout" if not es else "Resumen de compra") + tag("button", "×", type="button", class_="portal-button", data_portal_action="close-checkout"), class_="studio-editor__head") + tag("p", "", data_checkout_summary=True) + tag("p", text(demo_note), class_="portal-note") + link("Profile" if not es else "Perfil", site.url("account"), "portal-button portal-button--white"), class_="studio-editor", data_checkout_dialog=True)
+    return section_wrap("pricing", section_head(title, lead) + toggle + tag("div", join(plans), class_="access-grid") + tag("p", text(demo_note), class_="access-note") + dialog)
 
 
 def help_section(site, copy):
     support = join(
-        tag("a", tag("h3", icon(glyph, 16) + text(title)) + tag("p", text(description)) + tag("span", text(label) + icon("arrow-right", 14)), class_="reference-support", href=site.resolve_link(href))
+        tag("a", tag("h3", icon(glyph, 16) + text(title)) + tag("p", text(description)) + tag("span", text(label) + icon("arrow-right", 14)), class_="reference-support", href=site.url(href) if href in ("faq", "account") else site.resolve_link(href))
         for glyph, title, description, label, href in copy["support"]
     )
     faq = join(
@@ -325,7 +327,7 @@ def build_landing(site, modules, stats, translate, demo, landing):
     return join((
         hero(site, copy),
         features(site, copy, lab),
-        access_section(site, copy, content["project"]["launch"]),
+        tag("div", pricing_section(site), id="project"),
         help_section(site, copy),
         control_templates(demo["gui"]),
         json_script("demo-strings", {key: demo[key] for key in ("gui", "hud", "kill", "recordings")}),

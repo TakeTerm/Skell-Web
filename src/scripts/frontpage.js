@@ -88,6 +88,7 @@ function setupPreview(panel) {
 
 function setupNavigation() {
   const nav = document.querySelector(".reference-nav");
+  if (!nav) return;
   const button = document.querySelector("[data-reference-menu]");
   const dropdowns = [...nav.querySelectorAll("details")];
 
@@ -128,23 +129,13 @@ function setupNavigation() {
   }
 }
 
-function setupAccess() {
-  const section = document.querySelector("#project");
-  const panels = [...section.querySelectorAll("[data-access-panel]")];
-  bindChoices(section, "[data-access-toggle]", (button) => {
-    for (const panel of panels) panel.hidden = panel.dataset.accessPanel !== button.dataset.accessToggle;
-  });
-}
-
 function openStudioFromHash() {
   if (!["#studio", "#studio-demo"].includes(location.hash)) return;
-  document.querySelector("#studio").open = true;
+  const studio = document.querySelector("#studio");
+  if (studio) studio.open = true;
 }
 
-if (preview) {
-  setupPreview(preview);
-  setupNavigation();
-  setupAccess();
-  openStudioFromHash();
-  addEventListener("hashchange", openStudioFromHash);
-}
+if (preview && !preview.closest(".portal-scene")) setupPreview(preview);
+setupNavigation();
+openStudioFromHash();
+addEventListener("hashchange", openStudioFromHash);

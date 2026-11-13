@@ -88,133 +88,34 @@ def head(site, page, title, description, styles, structured_data=""):
     return tag("head", join(pieces))
 
 
-def header(site, page, active_section):
-    interface = site.interface
-    labels = interface["nav"]
-    links = [
-        ("demo", site.url("home") + "#demo"),
-        ("features", site.url("home") + "#features"),
-        ("docs", site.url("docs")),
-        ("project", site.url("home") + "#project"),
-    ]
-    if page == "home":
-        from .frontpage import landing_header
-
-        return landing_header(site)
-    anchors = join(
-        tag(
-            "a",
-            labels[key],
-            href=href,
-            class_="site-nav__link",
-            aria_current="page" if key == active_section else None,
-        )
-        for key, href in links
-    )
-    brand = tag(
-        "a",
-        tag("span", "", class_="brand__mark") + tag("span", f'Skell <span class="brand__client">Client</span>'),
-        class_="brand",
-        href=site.url("home"),
-        aria_label=f"{site.config['name']} — {labels['home']}",
-    )
-    actions = join(
-        [
-            language_switch(site, page),
-            tag(
-                "a",
-                interface["cta"]["guides"] + icon("arrow-right", 18, "icon icon-arrow"),
-                class_="btn btn--primary btn--small site-header__cta",
-                href=site.url("docs/getting-started"),
-            ),
-            tag(
-                "button",
-                tag("span", "", class_="menu-button__line") * 3,
-                class_="menu-button",
-                type="button",
-                aria_label=labels["open"],
-                aria_expanded="false",
-                aria_controls="mobile-menu",
-                data_menu_button=True,
-                data_open_label=labels["open"],
-                data_close_label=labels["close"],
-            ),
-        ]
-    )
-    return tag(
-        "header",
-        tag(
-            "div",
-            brand + tag("nav", anchors, class_="site-nav", aria_label=labels["primary"]) + tag("div", actions, class_="site-header__actions"),
-            class_="container site-header__inner",
-        ),
-        class_="site-header",
-        data_header=True,
-    )
-
-
-def language_switch(site, page):
-    options = []
-    for code in site.config["languages"]:
-        label = {"en": "EN", "es": "ES"}[code]
-        current = code == site.language
-        options.append(
-            tag(
-                "a",
-                label,
-                class_="segmented__option",
-                href=site.url(page, code),
-                hreflang=code,
-                lang=code,
-                aria_current="true" if current else None,
-                aria_label={"en": "English", "es": "Español"}[code],
-                data_language_choice=code,
-            )
-        )
-    return tag("div", join(options), class_="segmented", role="group", aria_label=site.interface["nav"]["language"])
-
-
-def mobile_menu(site, page, active_section):
-    labels = site.interface["nav"]
-    entries = [
-        ("demo", site.url("home") + "#demo"),
-        ("features", site.url("home") + "#features"),
-        ("docs", site.url("docs")),
-        ("project", site.url("home") + "#project"),
-    ]
-    links = join(
-        tag(
-            "a",
-            tag("span", labels[key]) + icon("arrow-right", 26),
-            class_="mobile-menu__link",
-            href=href,
-            style=f"--i:{index}",
-            aria_current="page" if key == active_section else None,
-        )
-        for index, (key, href) in enumerate(entries)
-    )
-    foot = tag(
-        "div",
-        tag("span", site.interface["footer"]["developedBy"], class_="eyebrow") + language_switch(site, page),
-        class_="mobile-menu__foot",
-    )
-    return tag(
-        "div",
-        tag("nav", links, class_="mobile-menu__links", aria_label=labels["primary"]) + foot,
-        class_="mobile-menu",
-        id="mobile-menu",
-        data_mobile_menu=True,
-    )
-
-
 def footer(site):
+    from .portal import LEGAL, local
+
     labels = site.interface["footer"]
+    groups = (
+        (local(site, "Product", "Producto"), (
+            (local(site, "Features", "Funciones"), "home:#features"),
+            (local(site, "Pricing", "Precios"), "home:#pricing"),
+            (local(site, "Profile", "Perfil"), "account"),
+            (local(site, "Documentation", "Documentación"), "docs:"),
+        )),
+        (local(site, "Studio", "Estudio"), (
+            (local(site, "Textures", "Texturas"), "textures"),
+            (local(site, "Resource packs", "Paquetes de recursos"), "resourcepacks"),
+            (local(site, "Support", "Ayuda"), "faq"),
+            (local(site, "Changelog", "Novedades"), "docs:changelog"),
+        )),
+        (local(site, "Project", "Proyecto"), (
+            (local(site, "Partnership", "Colaboraciones"), "partnership"),
+            (local(site, "Press kit", "Material de prensa"), "partnership/press"),
+            (local(site, "Affiliates", "Afiliados"), "partnership/affiliates"),
+            (local(site, "Contacts", "Contacto"), "legal/contacts"),
+        )),
+    )
     columns = []
-    for title, entries in labels["columns"]:
-        links = join(
-            tag("li", tag("a", name, href=site.resolve_link(target))) for name, target in entries
-        )
-        columns.append(tag("div", tag("h2", title) + tag("ul", links)))
+    for title, entries in groups:
+        links = join(tag("li", tag("a", text(name), href=site.resolve_link(target) if ":" in target else site.url(target))) for name, target in entries)
+        columns.append(tag("div", tag("h2", text(title)) + tag("ul", links)))
     brand = tag(
         "div",
         tag(
@@ -230,7 +131,8 @@ def footer(site):
     legal = tag(
         "div",
         tag("p", f"© {site.config['year']} {site.config['author']}. {labels['rights']}")
-        + tag("p", labels["trademark"]),
+        + tag("p", labels["trademark"])
+        + tag("nav", join(tag("a", text(local(site, english, spanish)), href=site.url("legal/" + slug)) for slug, english, spanish, _ in LEGAL) + tag("button", local(site, "Cookie settings", "Preferencias de cookies"), type="button", data_cookie_open=True), class_="reference-legal-links"),
         class_="site-footer__legal",
     )
     return tag(
@@ -244,15 +146,18 @@ def footer(site):
     )
 
 
-def page(site, key, title, description, body, styles, scripts, active_section="", main_class="", data=None):
+def page(site, key, title, description, body, styles, scripts, main_class="", data=None):
+    from .frontpage import landing_header
+    from .portal import cookie_panel
+
     shell = join(
         [
             tag("a", site.interface["skip"], class_="skip-link", href="#main"),
             tag("div", "", class_="backdrop"),
-            header(site, key, active_section),
-            mobile_menu(site, key, active_section) if key != "home" else "",
+            landing_header(site, key),
             tag("main", body, id="main", class_=main_class),
             footer(site),
+            cookie_panel(site),
             join(tag("script", "", type="module", src=f"/assets/{name}") for name in scripts),
         ]
     )

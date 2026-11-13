@@ -1,9 +1,9 @@
-html:has(.landing) {
+html:has(.reference-header) {
   background: #000;
   scroll-padding-top: 88px;
 }
 
-body:has(.landing) {
+body:has(.reference-header) {
   --ink-0: #000;
   --ink-1: #000;
   --ink-2: #080808;
@@ -22,7 +22,7 @@ body:has(.landing) {
   background: #000;
 }
 
-body:has(.landing) .backdrop {
+body:has(.reference-header) .backdrop {
   display: none;
 }
 
@@ -646,8 +646,7 @@ body:has(.landing) .backdrop {
   gap: 14px;
 }
 
-.access-card,
-.access-specs {
+.access-card {
   position: relative;
   overflow: hidden;
   border: 1px solid #ffffff26;
@@ -744,31 +743,6 @@ body:has(.landing) .backdrop {
   width: 100%;
   min-height: 45px;
   margin-top: auto;
-}
-
-.access-specs h3 {
-  font-size: 21px;
-  font-weight: 500;
-}
-
-.access-specs dl {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-  gap: 12px;
-  margin-bottom: 0;
-}
-
-.access-specs dl div {
-  border: 1px solid #ffffff19;
-  border-radius: 8px;
-  padding: 12px;
-  color: #aaa;
-}
-
-.access-specs dd {
-  margin: 4px 0 0;
-  color: #fff;
-  font: 15px var(--font-mono);
 }
 
 .access-note {
@@ -874,17 +848,17 @@ body:has(.landing) .backdrop {
   font-size: 13px;
 }
 
-body:has(.landing) .site-footer {
+body:has(.reference-header) .site-footer {
   padding: 105px 0 32px;
   background: #000;
 }
 
-body:has(.landing) .site-footer__grid {
+body:has(.reference-header) .site-footer__grid {
   grid-template-columns: 1.1fr 1.5fr;
 }
 
-body:has(.landing) .site-footer__columns a,
-body:has(.landing) .site-footer__brand p {
+body:has(.reference-header) .site-footer__columns a,
+body:has(.reference-header) .site-footer__brand p {
   font-size: 13px;
 }
 
@@ -945,8 +919,8 @@ body:has(.landing) .site-footer__brand p {
   .access-card ul { grid-template-columns: 1fr 1fr; }
   .reference-help { margin-top: 32px; }
   .reference-supports, .reference-faq { grid-template-columns: 1fr; gap: 8px; }
-  body:has(.landing) .site-footer { padding: 60px 0 24px; }
-  body:has(.landing) .site-footer__grid { grid-template-columns: 1fr; }
+  body:has(.reference-header) .site-footer { padding: 60px 0 24px; }
+  body:has(.reference-header) .site-footer__grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

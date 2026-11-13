@@ -67,6 +67,12 @@ I generate the website with Python’s standard library. The build reads configu
 
 I keep the content and browser source separate so I can update copy, translations, and guides without editing generated HTML. The website build uses Python. The Java and Fabric versions below apply to the Minecraft client.
 
+## Website sections
+
+I built dedicated pages for pricing and checkout, account access, creator partnerships, the press kit, the knowledge base, and project information. Account access uses a temporary browser session. Checkout displays a sample order, and partnership submissions stay in the browser as drafts.
+
+In Studio, I can browse the included texture samples or import the textures from my own Minecraft Java client JAR or resource-pack ZIP. I can edit pixels, save a draft, download individual images, and export a resource-pack ZIP for Minecraft 1.21.11. The press kit exports the Skell mark as SVG, PNG, or JPG.
+
 ## Run the site locally
 
 Use Python **3.13**, the version used for development. I also verified the build and validation with Python **3.12**. The workflow uses the standard library and needs no package installation.

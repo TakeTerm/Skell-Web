@@ -654,3 +654,20 @@
     display: none;
   }
 }
+
+body:has(.reference-header) .docs__header {
+  border-color: #ffffff22;
+}
+
+body:has(.reference-header) .docs__sidebar,
+body:has(.reference-header) .docs-toc {
+  border-color: #ffffff17;
+}
+
+body:has(.reference-header) .docs-index .guide-card {
+  background: linear-gradient(145deg, #151515, #080808);
+}
+
+body:has(.reference-header) .docs-index .guide-card:hover {
+  border-color: #ffffff52;
+}
