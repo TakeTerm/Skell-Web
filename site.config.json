@@ -1,0 +1,13 @@
+{
+  "name": "Skell Client",
+  "author": "Take",
+  "year": 2026,
+  "version": "0.15.1",
+  "minecraft": "1.21.11",
+  "fabricLoader": "0.20.1",
+  "fabricApi": "0.141.6",
+  "java": "21",
+  "siteUrl": "https://skellclient.vercel.app",
+  "languages": ["en", "es"],
+  "defaultLanguage": "en"
+}
