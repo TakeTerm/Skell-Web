@@ -1,0 +1,25 @@
+{
+ "version": "0.15.1",
+ "files": 589,
+ "ownPhysicalLines": 70374,
+ "ownCodeLines": 60427,
+ "excludedThirdPartyPhysicalLines": 21607,
+ "publishedFigure": "70k+",
+ "groups": {
+  "port": 23493,
+  "module": 10704,
+  "cosmetics": 10276,
+  "screen": 5994,
+  "render": 4279,
+  "mixin": 3922,
+  "shaders": 3837,
+  "ui": 2706,
+  "service": 2023,
+  "config": 941,
+  "tests": 925,
+  "hud": 442,
+  "root": 433,
+  "network": 339,
+  "tooltip": 60
+ }
+}

@@ -1,0 +1,162 @@
+{
+  "gui": {
+    "title": "Skell Client",
+    "search": "Search modules",
+    "searchKeys": "Ctrl F",
+    "sections": {
+      "modules": "Modules",
+      "style": "Style",
+      "client": "Client"
+    },
+    "settings": "Settings",
+    "enabled": "Enabled",
+    "noResults": "No modules match your search.",
+    "allGroup": "All",
+    "close": "Close settings",
+    "reset": "Reset to defaults",
+    "keybind": "Keybind",
+    "unbound": "None",
+    "pressKey": "Press a key…",
+    "previewNote": "Preview",
+    "client": {
+      "accent": "Accent color",
+      "accentHint": "The color of switches, selections and focus across the menu.",
+      "layout": "Settings layout",
+      "layoutHint": "Sheet grows from the card. Side panel keeps settings beside the window.",
+      "layoutOptions": [
+        "Sheet",
+        "Side panel"
+      ],
+      "animations": "Animations",
+      "animationsHint": "Reduced shortens movement; Off removes it, including the bounce.",
+      "animationsOptions": [
+        "Full",
+        "Reduced",
+        "Off"
+      ],
+      "language": "Language",
+      "languageHint": "Changes the language of the menu, and of this page."
+    }
+  },
+  "hud": {
+    "widgets": {
+      "fps": "FPS",
+      "song": "Midnight Drive",
+      "artist": "Neon Arcade"
+    },
+    "widgetHelp": "Drag to move, arrow keys nudge by 1 pixel, Delete hides it, R resets it.",
+    "hint": "Drag a widget. Hold Shift to release the snap. Arrows nudge 1 px, Delete hides, R resets, Ctrl+Z undoes. Drag the corner to resize.",
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Shift+Z)",
+    "reset": "Reset the layout",
+    "barHandle": "Drag the Edit HUD bar. Double-click to put it back.",
+    "editHud": "Edit HUD",
+    "nothingSelected": "Select a widget",
+    "selected": "Selected: {name}",
+    "show": "Show",
+    "anchored": "Anchored to {vertical}, {horizontal}",
+    "anchors": {
+      "t": "top",
+      "m": "middle",
+      "b": "bottom",
+      "l": "left",
+      "c": "center",
+      "r": "right"
+    },
+    "moved": "{name} moved",
+    "hiddenWidget": "{name} hidden",
+    "shownWidget": "{name} shown",
+    "undone": "Undone",
+    "redone": "Redone",
+    "resetDone": "Layout reset",
+    "panel": "Widgets"
+  },
+  "kill": {
+    "random": "Random",
+    "canvasLabel": "Animated preview of a kill effect on a blocky character",
+    "replay": "Replay",
+    "effect": "Effect",
+    "colorModes": [
+      "Style",
+      "Theme",
+      "Custom"
+    ],
+    "loop": "Loop",
+    "note": "A 2D approximation of the kill effects. In the game they render in 3D with your own skin. Tung Tung and Tung Tung Floss are also in the client and are not recreated here.",
+    "badge": "2D preview"
+  },
+  "recordings": {
+    "filters": [
+      "All",
+      "Recordings",
+      "Clips"
+    ],
+    "filterLabel": "Filter",
+    "kinds": {
+      "recording": "Recording",
+      "clip": "Clip"
+    },
+    "rows": [
+      [
+        "Clip-11.mp4",
+        "clip",
+        "0:31",
+        "14.2 MB",
+        "Today"
+      ],
+      [
+        "Recording-4.mp4",
+        "recording",
+        "12:08",
+        "612 MB",
+        "Today"
+      ],
+      [
+        "Clip-10.mp4",
+        "clip",
+        "0:30",
+        "13.8 MB",
+        "Yesterday"
+      ],
+      [
+        "Recording-3.mp4",
+        "recording",
+        "3:47",
+        "181 MB",
+        "Mon"
+      ],
+      [
+        "Clip-9.mp4",
+        "clip",
+        "0:31",
+        "15.0 MB",
+        "Sun"
+      ]
+    ],
+    "recorder": "Recorder",
+    "recorderHint": "Records the Minecraft window",
+    "audio": "Desktop audio",
+    "start": "Start recording",
+    "stop": "Stop",
+    "instantReplay": "Instant Replay",
+    "instantReplayHint": "Keeps the last 30 seconds",
+    "warmup": "Warm-up of 30 s (sped up here)",
+    "ready": "Ready to save",
+    "saveClip": "Save clip",
+    "notReady": "Still warming up",
+    "saved": "Saved",
+    "play": "Play",
+    "show": "Show in folder",
+    "delete": "Delete",
+    "confirmDelete": "Delete?",
+    "empty": "Nothing here yet.",
+    "playNote": "Opens in your system player",
+    "showNote": "Shown in its folder",
+    "newName": "Clip-{n}.mp4",
+    "toast": {
+      "title": "Clip saved",
+      "subtitle": "Clip-12.mp4"
+    },
+    "today": "Today"
+  }
+}

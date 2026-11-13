@@ -1,0 +1,162 @@
+{
+  "gui": {
+    "title": "Skell Client",
+    "search": "Buscar módulos",
+    "searchKeys": "Ctrl F",
+    "sections": {
+      "modules": "Módulos",
+      "style": "Estilo",
+      "client": "Cliente"
+    },
+    "settings": "Ajustes",
+    "enabled": "Activado",
+    "noResults": "Ningún módulo coincide con tu búsqueda.",
+    "allGroup": "Todos",
+    "close": "Cerrar ajustes",
+    "reset": "Restablecer valores",
+    "keybind": "Tecla",
+    "unbound": "Ninguna",
+    "pressKey": "Pulsa una tecla…",
+    "previewNote": "Vista previa",
+    "client": {
+      "accent": "Color de acento",
+      "accentHint": "El color de interruptores, selecciones y foco en todo el menú.",
+      "layout": "Diseño de los ajustes",
+      "layoutHint": "La hoja crece desde la tarjeta. El panel lateral deja los ajustes junto a la ventana.",
+      "layoutOptions": [
+        "Hoja",
+        "Panel lateral"
+      ],
+      "animations": "Animaciones",
+      "animationsHint": "Reducida acorta el movimiento; Desactivado lo quita, rebote incluido.",
+      "animationsOptions": [
+        "Completa",
+        "Reducida",
+        "Desactivado"
+      ],
+      "language": "Idioma",
+      "languageHint": "Cambia el idioma del menú y de esta página."
+    }
+  },
+  "hud": {
+    "widgets": {
+      "fps": "FPS",
+      "song": "Midnight Drive",
+      "artist": "Neon Arcade"
+    },
+    "widgetHelp": "Arrastra para mover, las flechas lo mueven 1 píxel, Supr lo oculta, R lo restablece.",
+    "hint": "Arrastra un widget. Mantén Shift para soltar el imán. Las flechas mueven 1 px, Supr oculta, R restablece, Ctrl+Z deshace. Arrastra la esquina para cambiar el tamaño.",
+    "undo": "Deshacer (Ctrl+Z)",
+    "redo": "Rehacer (Ctrl+Shift+Z)",
+    "reset": "Restablecer la disposición",
+    "barHandle": "Arrastra la barra de Editar HUD. Doble clic para devolverla.",
+    "editHud": "Editar HUD",
+    "nothingSelected": "Elige un widget",
+    "selected": "Elegido: {name}",
+    "show": "Mostrar",
+    "anchored": "Anclado a {vertical}, {horizontal}",
+    "anchors": {
+      "t": "arriba",
+      "m": "el medio",
+      "b": "abajo",
+      "l": "la izquierda",
+      "c": "el centro",
+      "r": "la derecha"
+    },
+    "moved": "{name} movido",
+    "hiddenWidget": "{name} oculto",
+    "shownWidget": "{name} visible",
+    "undone": "Deshecho",
+    "redone": "Rehecho",
+    "resetDone": "Disposición restablecida",
+    "panel": "Widgets"
+  },
+  "kill": {
+    "random": "Aleatorio",
+    "canvasLabel": "Vista previa animada de un efecto de kill sobre un personaje de bloques",
+    "replay": "Repetir",
+    "effect": "Efecto",
+    "colorModes": [
+      "Estilo",
+      "Tema",
+      "Personalizado"
+    ],
+    "loop": "Repetir en bucle",
+    "note": "Una aproximación 2D de los kill effects. En el juego se dibujan en 3D con tu propia skin. Tung Tung y Tung Tung Floss también están en el cliente y aquí no se recrean.",
+    "badge": "Vista 2D"
+  },
+  "recordings": {
+    "filters": [
+      "Todos",
+      "Grabaciones",
+      "Clips"
+    ],
+    "filterLabel": "Filtro",
+    "kinds": {
+      "recording": "Grabación",
+      "clip": "Clip"
+    },
+    "rows": [
+      [
+        "Clip-11.mp4",
+        "clip",
+        "0:31",
+        "14,2 MB",
+        "Hoy"
+      ],
+      [
+        "Recording-4.mp4",
+        "recording",
+        "12:08",
+        "612 MB",
+        "Hoy"
+      ],
+      [
+        "Clip-10.mp4",
+        "clip",
+        "0:30",
+        "13,8 MB",
+        "Ayer"
+      ],
+      [
+        "Recording-3.mp4",
+        "recording",
+        "3:47",
+        "181 MB",
+        "Lun"
+      ],
+      [
+        "Clip-9.mp4",
+        "clip",
+        "0:31",
+        "15,0 MB",
+        "Dom"
+      ]
+    ],
+    "recorder": "Grabador",
+    "recorderHint": "Graba la ventana de Minecraft",
+    "audio": "Audio del escritorio",
+    "start": "Empezar a grabar",
+    "stop": "Detener",
+    "instantReplay": "Instant Replay",
+    "instantReplayHint": "Guarda los últimos 30 segundos",
+    "warmup": "Calentamiento de 30 s (acelerado aquí)",
+    "ready": "Listo para guardar",
+    "saveClip": "Guardar clip",
+    "notReady": "Todavía calentando",
+    "saved": "Guardado",
+    "play": "Reproducir",
+    "show": "Mostrar en la carpeta",
+    "delete": "Borrar",
+    "confirmDelete": "¿Borrar?",
+    "empty": "Aquí no hay nada todavía.",
+    "playNote": "Se abre en el reproductor del sistema",
+    "showNote": "Se muestra en su carpeta",
+    "newName": "Clip-{n}.mp4",
+    "toast": {
+      "title": "Clip guardado",
+      "subtitle": "Clip-12.mp4"
+    },
+    "today": "Hoy"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "groups": ["start", "guides", "reference", "help", "project"],
+  "pages": [
+    {"slug": "getting-started", "group": "start", "icon": "bolt", "title": "Getting started", "description": "What Skell Client is, what you need to run it and how it will install."},
+    {"slug": "interface", "group": "start", "icon": "sliders", "title": "Interface & controls", "description": "Open the menu, find modules, switch language and pick a settings layout."},
+    {"slug": "hud-editor", "group": "guides", "icon": "layout", "title": "HUD editor", "description": "Anchoring, snapping, undo and every shortcut of the widget editor."},
+    {"slug": "visuals", "group": "guides", "icon": "sparkles", "title": "Visuals & cosmetics", "description": "Kill effects, world effects, previews and the cosmetics page."},
+    {"slug": "music-and-captures", "group": "guides", "icon": "music", "title": "Music & captures", "description": "Lyrics, the music player, screenshots, the recorder and 30-second clips."},
+    {"slug": "utilities", "group": "guides", "icon": "wrench", "title": "Utilities", "description": "Shulker Preview, zoom, checkpoints, macros and the other tools."},
+    {"slug": "modules", "group": "reference", "icon": "book", "title": "Module reference", "description": "Every module and setting in version {{version}}, searchable."},
+    {"slug": "troubleshooting", "group": "help", "icon": "wrench", "title": "Troubleshooting & FAQ", "description": "Install, performance, controls and features with special requirements."},
+    {"slug": "changelog", "group": "project", "icon": "book", "title": "Changelog", "description": "What changed in each version, from 0.13.0 to {{version}}."},
+    {"slug": "credits", "group": "project", "icon": "info", "title": "Credits & licenses", "description": "Third-party components and who made what."}
+  ],
+  "reference": {
+    "on": "On",
+    "off": "Off",
+    "defaultValue": "default",
+    "color": "Color",
+    "text": "Text",
+    "range": "from {min} to {max}",
+    "settingsOne": "setting",
+    "settingsMany": "settings",
+    "showSettings": "Show settings",
+    "noSettings": "This module has no settings of its own."
+  }
+}

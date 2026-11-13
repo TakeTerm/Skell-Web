@@ -1,0 +1,27 @@
+{
+  "groups": ["start", "guides", "reference", "help", "project"],
+  "pages": [
+    {"slug": "getting-started", "group": "start", "icon": "bolt", "title": "Primeros pasos", "description": "Qué es Skell Client, qué necesitas para ejecutarlo y cómo se instalará."},
+    {"slug": "interface", "group": "start", "icon": "sliders", "title": "Interfaz y controles", "description": "Abre el menú, encuentra módulos, cambia el idioma y elige un diseño de ajustes."},
+    {"slug": "hud-editor", "group": "guides", "icon": "layout", "title": "Editor del HUD", "description": "Anclaje, imán, deshacer y todos los atajos del editor de widgets."},
+    {"slug": "visuals", "group": "guides", "icon": "sparkles", "title": "Visuales y cosméticos", "description": "Kill effects, efectos del mundo, vistas previas y la página de cosméticos."},
+    {"slug": "music-and-captures", "group": "guides", "icon": "music", "title": "Música y capturas", "description": "Letras, reproductor de música, capturas, grabador y clips de 30 segundos."},
+    {"slug": "utilities", "group": "guides", "icon": "wrench", "title": "Utilidades", "description": "Shulker Preview, zoom, checkpoints, macros y el resto de herramientas."},
+    {"slug": "modules", "group": "reference", "icon": "book", "title": "Referencia de módulos", "description": "Todos los módulos y ajustes de la versión {{version}}, con buscador."},
+    {"slug": "troubleshooting", "group": "help", "icon": "wrench", "title": "Problemas y preguntas frecuentes", "description": "Instalación, rendimiento, controles y funciones con requisitos especiales."},
+    {"slug": "changelog", "group": "project", "icon": "book", "title": "Registro de cambios", "description": "Qué cambió en cada versión, de la 0.13.0 a la {{version}}."},
+    {"slug": "credits", "group": "project", "icon": "info", "title": "Créditos y licencias", "description": "Componentes de terceros y quién hizo qué."}
+  ],
+  "reference": {
+    "on": "Activado",
+    "off": "Desactivado",
+    "defaultValue": "por defecto",
+    "color": "Color",
+    "text": "Texto",
+    "range": "de {min} a {max}",
+    "settingsOne": "ajuste",
+    "settingsMany": "ajustes",
+    "showSettings": "Ver ajustes",
+    "noSettings": "Este módulo no tiene ajustes propios."
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "lang": {
+    "code": "es",
+    "locale": "es_MX"
+  },
+  "skip": "Saltar al contenido",
+  "meta": {
+    "title": "Skell Client — un cliente oscuro y preciso para Minecraft 1.21.11",
+    "description": "Skell Client es un cliente Fabric independiente para Minecraft 1.21.11: menú de mods personalizable, editor de HUD con anclaje, efectos visuales, música y clips. Lanzamiento público muy pronto.",
+    "imageAlt": "Emblema de Skell Client junto al texto: un cliente oscuro y preciso para Minecraft 1.21.11"
+  },
+  "nav": {
+    "home": "Inicio",
+    "primary": "Principal",
+    "demo": "Demo",
+    "features": "Funciones",
+    "docs": "Docs",
+    "project": "Proyecto",
+    "open": "Abrir menú",
+    "close": "Cerrar menú",
+    "language": "Idioma"
+  },
+  "cta": {
+    "explore": "Explorar Skell",
+    "guides": "Leer las guías",
+    "demo": "Probar la demo",
+    "learn": "Conocer el cliente"
+  },
+  "footer": {
+    "tagline": "Un cliente Fabric independiente para Minecraft 1.21.11 con menú de mods, editor de HUD con anclaje, efectos visuales, música y clips.",
+    "developedBy": "Desarrollado por Take",
+    "rights": "Todos los derechos reservados.",
+    "trademark": "Minecraft es una marca de Mojang Studios. Skell Client es un proyecto independiente y no está afiliado a Mojang ni a Microsoft.",
+    "columns": [
+      [
+        "Explorar",
+        [
+          [
+            "Demo",
+            "home:#demo"
+          ],
+          [
+            "Funciones",
+            "home:#features"
+          ],
+          [
+            "Estado del proyecto",
+            "home:#project"
+          ]
+        ]
+      ],
+      [
+        "Documentación",
+        [
+          [
+            "Primeros pasos",
+            "docs:getting-started"
+          ],
+          [
+            "Interfaz y controles",
+            "docs:interface"
+          ],
+          [
+            "Problemas y preguntas frecuentes",
+            "docs:troubleshooting"
+          ]
+        ]
+      ],
+      [
+        "Proyecto",
+        [
+          [
+            "Registro de cambios",
+            "docs:changelog"
+          ],
+          [
+            "Referencia de módulos",
+            "docs:modules"
+          ],
+          [
+            "Créditos y licencias",
+            "docs:credits"
+          ]
+        ]
+      ]
+    ]
+  },
+  "docs": {
+    "title": "Documentación",
+    "menu": "Menú de la documentación",
+    "onThisPage": "En esta página",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "backToGuides": "Todas las guías",
+    "breadcrumb": "Ruta de navegación",
+    "searchModules": "Buscar módulos",
+    "allCategories": "Todos",
+    "noModules": "Ningún módulo coincide con tu búsqueda.",
+    "modulesCount": "módulos",
+    "settingsCount": "ajustes",
+    "newBadge": "NEW",
+    "defaultOff": "Apagado por defecto",
+    "groups": {
+      "start": "Empieza aquí",
+      "guides": "Guías",
+      "reference": "Referencia",
+      "help": "Ayuda",
+      "project": "Proyecto"
+    }
+  },
+  "docsIndex": {
+    "title": "Documentación",
+    "lead": "Guías de cada parte de Skell Client {{version}}: cómo empezar, cómo funciona la interfaz y qué hace cada módulo."
+  }
+}

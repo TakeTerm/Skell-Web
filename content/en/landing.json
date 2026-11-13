@@ -1,0 +1,132 @@
+{
+  "hero": {
+    "eyebrow": "Fabric · Minecraft 1.21.11",
+    "title": "Cut to *fit*.",
+    "lead": "A Fabric client with a glass-style mods menu, an HUD editor that remembers where every widget belongs, more than 140 modules, synced lyrics and 30-second clips.",
+    "primary": "Explore Skell",
+    "secondary": "Read the guides",
+    "note": "Public launch coming soon",
+    "previewLabel": "Skell Client mods menu, version {{version}}",
+    "scrollHint": "Scroll to see it in action"
+  },
+  "demo": {
+    "eyebrow": "Skell in action",
+    "title": "Hands on, before it ships.",
+    "lead": "An interactive version of the {{version}} interface, built from the client's real modules, settings and translations. Switch modules on, open their settings, drag widgets, replay a kill effect.",
+    "note": "Recreated in HTML for the web, not captured from the game. Anything that needs the game itself, like the 3D previews, is approximated.",
+    "reset": "Reset demo",
+    "tabs": {
+      "gui": "Mods menu",
+      "hud": "HUD editor",
+      "kill": "Kill effects",
+      "recordings": "Recordings"
+    }
+  },
+  "features": {
+    "eyebrow": "What is inside",
+    "title": "Five areas, one design system.",
+    "lead": "Every part of Skell uses the same surfaces, controls and motion, so learning one screen teaches you the rest. The full catalog lives in the docs.",
+    "items": [
+      {
+        "id": "interface",
+        "icon": "sliders",
+        "kicker": "Interface & customization",
+        "title": "Two ways to edit every setting",
+        "text": "Pick a sheet that grows out of the module card, or a side panel with wide cards in two columns. Both draw the same modules, previews and values, and switching never resets anything. Choose your accent color, animation level and language.",
+        "link": "Read the interface guide",
+        "target": "docs:interface"
+      },
+      {
+        "id": "hud",
+        "icon": "layout",
+        "kicker": "HUD & widgets",
+        "title": "An editor that remembers where things go",
+        "text": "Every widget anchors to its nearest screen edge, snaps to edges, the center and its neighbors, and supports up to 60 undo steps. Drag the widget beside this text to feel it.",
+        "link": "Read the HUD editor guide",
+        "target": "docs:hud-editor"
+      },
+      {
+        "id": "visuals",
+        "icon": "sparkles",
+        "kicker": "Visuals & cosmetics",
+        "title": "See an effect before you commit to it",
+        "text": "Settings sheets show live previews, kill finishers get a 3D preview with your own skin, and the world can have waves, snow or wet ground. Land a kill and the last 30 seconds can be saved as a clip automatically.",
+        "link": "Read the visuals guide",
+        "target": "docs:visuals"
+      },
+      {
+        "id": "music",
+        "icon": "music",
+        "kicker": "Music & captures",
+        "title": "Lyrics in a pill that stretches with the line",
+        "text": "Synced lyrics from LRCLIB in World, HUD, Compact or Island modes next to a music player. Save the last 30 seconds with desktop audio on Windows, and review everything on the Recordings screen.",
+        "link": "Read the music and captures guide",
+        "target": "docs:music-and-captures"
+      },
+      {
+        "id": "utilities",
+        "icon": "wrench",
+        "kicker": "Utilities",
+        "title": "Peek inside a shulker box",
+        "text": "Hold Left Shift over a shulker box to read all 27 slots. Item details, inventory alerts, zoom, freelook, checkpoints and macros round out the toolbox.",
+        "link": "Read the utilities guide",
+        "target": "docs:utilities"
+      }
+    ],
+    "clip": {
+      "title": "Clip saved",
+      "subtitle": "Clip-12.mp4"
+    },
+    "shulker": {
+      "hint": "Press and hold the box",
+      "hold": "Hold",
+      "label": "Shulker box preview",
+      "title": "Shulker Box"
+    },
+    "hudMini": {
+      "hint": "Drag the widget",
+      "fps": "FPS",
+      "coordinates": "XYZ"
+    },
+    "layouts": {
+      "sheet": "Sheet",
+      "panel": "Side panel",
+      "label": "Settings layout"
+    },
+    "lyrics": {
+      "song": "Midnight Drive",
+      "artist": "Neon Arcade",
+      "line": "We keep the lights low and the engine loud"
+    }
+  },
+  "project": {
+    "eyebrow": "Project status",
+    "statement": "Skell Client is under constant development and will be public soon. The project is developed independently by Take.",
+    "developedBy": "Developed by Take",
+    "stats": [
+      {
+        "value": "{{modules}}",
+        "label": "modules"
+      },
+      {
+        "value": "{{lines}}",
+        "label": "lines of code"
+      },
+      {
+        "value": "{{minecraft}}",
+        "label": "Minecraft version"
+      },
+      {
+        "value": "EN · ES",
+        "label": "built-in languages"
+      }
+    ],
+    "linesNote": "Lines counted in the source of version {{version}}: Java and shaders written for the project, tests included. Third-party code, generated files, media and builds are excluded.",
+    "launch": "Public launch coming soon",
+    "actions": {
+      "learn": "Learn about the client",
+      "demo": "Try the demo",
+      "guides": "Read the guides"
+    }
+  }
+}

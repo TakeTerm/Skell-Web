@@ -1,0 +1,132 @@
+{
+  "hero": {
+    "eyebrow": "Fabric · Minecraft 1.21.11",
+    "title": "A tu *medida*.",
+    "lead": "Un cliente Fabric con menú de mods de vidrio, un editor de HUD que recuerda dónde va cada widget, más de 140 módulos, letras sincronizadas y clips de 30 segundos.",
+    "primary": "Explorar Skell",
+    "secondary": "Leer las guías",
+    "note": "Lanzamiento público muy pronto",
+    "previewLabel": "Menú de mods de Skell Client, versión {{version}}",
+    "scrollHint": "Baja para verlo en acción"
+  },
+  "demo": {
+    "eyebrow": "Skell en acción",
+    "title": "Pruébalo antes de que salga.",
+    "lead": "Una versión interactiva de la interfaz {{version}}, construida con los módulos, ajustes y traducciones reales del cliente. Enciende módulos, abre sus ajustes, arrastra widgets y repite un efecto de kill.",
+    "note": "Recreada en HTML para la web, no capturada del juego. Lo que depende del juego en sí, como las vistas previas en 3D, es aproximado.",
+    "reset": "Reiniciar demo",
+    "tabs": {
+      "gui": "Menú de mods",
+      "hud": "Editor del HUD",
+      "kill": "Kill effects",
+      "recordings": "Grabaciones"
+    }
+  },
+  "features": {
+    "eyebrow": "Qué incluye",
+    "title": "Cinco áreas, un solo sistema de diseño.",
+    "lead": "Todo Skell usa las mismas superficies, controles y movimiento, así que aprender una pantalla te enseña las demás. El catálogo completo está en la documentación.",
+    "items": [
+      {
+        "id": "interface",
+        "icon": "sliders",
+        "kicker": "Interfaz y personalización",
+        "title": "Dos formas de editar cada ajuste",
+        "text": "Elige una hoja que crece desde la tarjeta del módulo, o un panel lateral con tarjetas anchas en dos columnas. Los dos dibujan los mismos módulos, vistas previas y valores, y cambiar de uno a otro no reinicia nada. Escoge tu color, el nivel de animación y el idioma.",
+        "link": "Leer la guía de la interfaz",
+        "target": "docs:interface"
+      },
+      {
+        "id": "hud",
+        "icon": "layout",
+        "kicker": "HUD y widgets",
+        "title": "Un editor que recuerda dónde van las cosas",
+        "text": "Cada widget se ancla al borde más cercano, se imanta a bordes, centro y vecinos, y admite hasta 60 pasos de deshacer. Arrastra el widget junto a este texto para sentirlo.",
+        "link": "Leer la guía del editor de HUD",
+        "target": "docs:hud-editor"
+      },
+      {
+        "id": "visuals",
+        "icon": "sparkles",
+        "kicker": "Visuales y cosméticos",
+        "title": "Mira un efecto antes de quedarte con él",
+        "text": "Las hojas de ajustes muestran vistas previas en vivo, los finishers de kill tienen una vista 3D con tu propia skin y el mundo puede tener olas, nieve o suelo mojado. Si haces una kill, los últimos 30 segundos pueden guardarse solos como clip.",
+        "link": "Leer la guía de visuales",
+        "target": "docs:visuals"
+      },
+      {
+        "id": "music",
+        "icon": "music",
+        "kicker": "Música y capturas",
+        "title": "Letras en una píldora que se estira con la línea",
+        "text": "Letras sincronizadas de LRCLIB en modo World, HUD, Compact o Island junto a un reproductor de música. Guarda los últimos 30 segundos con el audio del escritorio en Windows y revisa todo en la pantalla de Grabaciones.",
+        "link": "Leer la guía de música y capturas",
+        "target": "docs:music-and-captures"
+      },
+      {
+        "id": "utilities",
+        "icon": "wrench",
+        "kicker": "Utilidades",
+        "title": "Mira dentro de una caja de shulker",
+        "text": "Mantén Shift izquierdo sobre una caja de shulker para leer sus 27 espacios. Detalles de objeto, alertas de inventario, zoom, vista libre, checkpoints y macros completan la caja de herramientas.",
+        "link": "Leer la guía de utilidades",
+        "target": "docs:utilities"
+      }
+    ],
+    "clip": {
+      "title": "Clip guardado",
+      "subtitle": "Clip-12.mp4"
+    },
+    "shulker": {
+      "hint": "Mantén pulsada la caja",
+      "hold": "Mantén",
+      "label": "Vista previa de la caja de shulker",
+      "title": "Caja de shulker"
+    },
+    "hudMini": {
+      "hint": "Arrastra el widget",
+      "fps": "FPS",
+      "coordinates": "XYZ"
+    },
+    "layouts": {
+      "sheet": "Hoja",
+      "panel": "Panel lateral",
+      "label": "Diseño de los ajustes"
+    },
+    "lyrics": {
+      "song": "Midnight Drive",
+      "artist": "Neon Arcade",
+      "line": "Dejamos las luces bajas y el motor a todo"
+    }
+  },
+  "project": {
+    "eyebrow": "Estado del proyecto",
+    "statement": "Skell Client está en constante desarrollo y será público pronto. El proyecto lo desarrolla Take de forma independiente.",
+    "developedBy": "Desarrollado por Take",
+    "stats": [
+      {
+        "value": "{{modules}}",
+        "label": "módulos"
+      },
+      {
+        "value": "{{lines}}",
+        "label": "líneas de código"
+      },
+      {
+        "value": "{{minecraft}}",
+        "label": "versión de Minecraft"
+      },
+      {
+        "value": "EN · ES",
+        "label": "idiomas integrados"
+      }
+    ],
+    "linesNote": "Líneas contadas en el código de la versión {{version}}: Java y shaders escritos para el proyecto, pruebas incluidas. Se excluyen el código de terceros, los archivos generados, los recursos multimedia y las compilaciones.",
+    "launch": "Lanzamiento público muy pronto",
+    "actions": {
+      "learn": "Conocer el cliente",
+      "demo": "Probar la demo",
+      "guides": "Leer las guías"
+    }
+  }
+}

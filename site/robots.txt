@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://skellclient.vercel.app/sitemap.xml
