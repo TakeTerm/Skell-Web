@@ -20,7 +20,7 @@ from builder.content import (
     substitute,
 )
 from builder.docs import build_doc, build_docs_index
-from builder.frontpage import build_landing
+from builder.frontpage import build_landing, build_studio_fragment
 from builder.landing import resolve_values
 from builder.layout import Site, page
 from builder.markup import tag
@@ -100,13 +100,14 @@ def build_language(language, config, modules, stats):
         "home",
         site.interface["meta"]["title"],
         site.interface["meta"]["description"],
-        build_landing(site, modules, stats, translate, demo, load_landing(language)),
+        build_landing(site),
         LANDING_STYLES,
         LANDING_SCRIPTS,
         main_class="landing",
         data={"data_page": "home"},
     )
     write(OUTPUT / prefix.lstrip("/") / "index.html", home)
+    write(OUTPUT / "assets" / "data" / f"studio.{language}.html", build_studio_fragment(site, modules, stats, translate, demo, landing))
     write(OUTPUT / "assets" / "data" / f"settings.{language}.json", json.dumps(settings_payload(modules, translate), ensure_ascii=False, separators=(",", ":")))
     write(OUTPUT / site.url("docs").lstrip("/") / "index.html", build_docs_index(site, guides))
     for entry in guides["pages"]:

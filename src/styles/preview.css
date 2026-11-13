@@ -422,3 +422,17 @@
 [hidden] {
   display: none !important;
 }
+
+@media (min-width: 1011px) {
+  .client-preview {
+    min-height: 725px;
+  }
+
+  .preview-card {
+    min-height: 632px;
+  }
+
+  .client-preview.is-expanded {
+    min-height: 810px;
+  }
+}

@@ -1,10 +1,13 @@
+import { createZip, readTextureCatalog, readTextureImage } from "./texture-archive.js";
+
 const studio = document.querySelector("[data-texture-studio]");
 const dialog = studio.querySelector("[data-texture-dialog]");
 const canvas = dialog.querySelector("[data-texture-canvas]");
 const context = canvas.getContext("2d", { willReadFrequently: true });
 const search = studio.querySelector("[data-portal-search]");
 const editing = studio.dataset.textureStudio === "resourcepacks";
-const cards = [...studio.querySelectorAll("[data-texture]")];
+const cards = new Map([...studio.querySelectorAll("[data-texture]")].map((card) => [card.dataset.texture, card]));
+const grid = studio.querySelector(".studio-grid");
 const categories = [...studio.querySelectorAll("[data-texture-category]")];
 const status = studio.querySelector("[data-studio-status]");
 const empty = studio.querySelector("[data-studio-empty]");
@@ -26,9 +29,19 @@ let packOnly = false;
 let brush = "draw";
 let previousPixel;
 let statusTimer;
+let opening = false;
+let textureBaseline;
+const locale = document.documentElement.lang;
 
 try {
-  pack = JSON.parse(localStorage.getItem(storageKey)) ?? pack;
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (saved && typeof saved.name === "string" && saved.entries && typeof saved.entries === "object") {
+    pack.name = saved.name;
+    for (const [key, entry] of Object.entries(saved.entries)) {
+      if (!entry || !Object.hasOwn(folderFor, entry.group) || typeof entry.data !== "string" || !entry.data.startsWith("data:image/png;")) continue;
+      pack.entries[key] = { ...entry, path: entry.path || folderFor[entry.group] + "/" + key + ".png" };
+    }
+  }
   format.value = localStorage.getItem("skell-texture-format") || "png";
   size.value = localStorage.getItem("skell-texture-size") || "512";
 } catch {}
@@ -96,45 +109,85 @@ function notify(message) {
 }
 
 function filterCards() {
-  const term = search.value.toLowerCase().trim();
-  for (const card of cards) {
-    const sameCategory = category === "all" || card.dataset.textureGroup === category;
-    const inPack = Object.hasOwn(pack.entries, card.dataset.texture);
-    card.hidden = !sameCategory || (packOnly && !inPack) || !card.textContent.toLowerCase().includes(term);
+  const term = search.value.toLocaleLowerCase(locale).trim();
+  let visible = 0;
+  for (const [key, card] of cards) {
+    const inCategory = category === "all" || card.dataset.textureGroup === category;
+    card.hidden = !inCategory || (packOnly && !Object.hasOwn(pack.entries, key)) || !card.dataset.search.includes(term);
+    if (!card.hidden) visible += 1;
   }
-  empty.hidden = cards.some((card) => !card.hidden);
+  empty.hidden = visible > 0;
 }
 
-function readImage(src, target) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      target.clearRect(0, 0, 16, 16);
-      target.imageSmoothingEnabled = false;
-      target.drawImage(image, 0, 0, 16, 16);
-      resolve();
-    };
-    image.onerror = reject;
-    image.src = src;
-  });
+async function drawSource(source, target, thumbnail = false) {
+  const image = new Image();
+  image.src = source;
+  await image.decode();
+  const limit = thumbnail ? 48 : 1024;
+  const scale = Math.min(1, limit / Math.max(image.naturalWidth, image.naturalHeight));
+  target.canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  target.canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  target.imageSmoothingEnabled = false;
+  target.drawImage(image, 0, 0, target.canvas.width, target.canvas.height);
+}
+
+async function drawBlob(blob, target, thumbnail = false) {
+  const url = URL.createObjectURL(blob);
+  try {
+    await drawSource(url, target, thumbnail);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function paintOriginal(key, group, target) {
+  target.canvas.width = 16;
+  target.canvas.height = 16;
+  paintSample(target, key, group);
+}
+
+async function drawTexture(key, group, target, thumbnail = false) {
+  const saved = editing && pack.entries[key];
+  const original = imported.get(key);
+  if (saved) await drawSource(saved.data, target, thumbnail);
+  else if (original) await drawBlob(await readTextureImage(original), target, thumbnail);
+  else paintOriginal(key, group, target);
+}
+
+function setBrush(value) {
+  brush = value;
+  for (const button of dialog.querySelectorAll("[data-brush]")) {
+    button.setAttribute("aria-pressed", String(button.dataset.brush === value));
+  }
+}
+
+function openEditor(key, group, label) {
+  active = { name: key, group };
+  textureBaseline = context.getImageData(0, 0, canvas.width, canvas.height);
+  dialog.querySelector("[data-texture-title]").textContent = label;
+  updateViewer();
+  setBrush("draw");
+  previousPixel = undefined;
+  if (!dialog.open) dialog.showModal();
 }
 
 async function showTexture(card) {
-  active = { name: card.dataset.texture, group: card.dataset.textureGroup };
-  dialog.querySelector("[data-texture-title]").textContent = card.querySelector("b").textContent;
-  context.clearRect(0, 0, 16, 16);
-  const saved = pack.entries[active.name];
-  if (saved && editing) await readImage(saved.data, context);
-  else if (imported.has(active.name)) await readImported(imported.get(active.name), context);
-  else paintSample(context, active.name, active.group);
-  brush = "draw";
-  previousPixel = undefined;
-  dialog.showModal();
+  if (opening) return;
+  const key = card.dataset.texture;
+  const group = card.dataset.textureGroup;
+  opening = true;
+  try {
+    await drawTexture(key, group, context);
+    openEditor(key, group, card.querySelector("b").textContent);
+  } finally {
+    opening = false;
+  }
 }
 
-function setPack() {
+function storePack(nextPack) {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(pack));
+    localStorage.setItem(storageKey, JSON.stringify(nextPack));
+    pack = nextPack;
     if (packCount) packCount.textContent = say("Textures", "Texturas") + ": " + Object.keys(pack.entries).length;
     return true;
   } catch {
@@ -143,42 +196,43 @@ function setPack() {
   }
 }
 
-function textureCard(key, group, label) {
-    const existing = cards.find((card) => card.dataset.texture === key);
-    if (existing) return existing;
-    const node = document.createElement("button");
-    node.type = "button";
-    node.className = "studio-texture";
-    node.dataset.texture = key;
-    node.dataset.textureGroup = group;
-    node.setAttribute("aria-pressed", "false");
-    const preview = document.createElement("canvas");
-    preview.width = 16;
-    preview.height = 16;
-    const image = document.createElement("span");
-    image.className = "studio-texture__image";
-    image.append(preview);
-    const name = document.createElement("b");
-    name.textContent = label;
-    const badge = document.createElement("small");
-    badge.textContent = group;
-    node.append(image, name, badge);
-    studio.querySelector(".studio-grid").append(node);
-    cards.push(node);
-    bindCard(node);
-    return node;
+function indexCard(card) {
+  card.dataset.search = card.textContent.toLocaleLowerCase(locale) + " " + card.dataset.texture;
 }
 
-function updatePackList() {
+function textureCard(key, group, label, target = grid) {
+  if (cards.has(key)) return cards.get(key);
+  const node = document.createElement("button");
+  node.type = "button";
+  node.className = "studio-texture";
+  node.dataset.texture = key;
+  node.dataset.textureGroup = group;
+  const preview = document.createElement("canvas");
+  preview.width = 16;
+  preview.height = 16;
+  const image = document.createElement("span");
+  image.className = "studio-texture__image";
+  image.append(preview);
+  const name = document.createElement("b");
+  name.textContent = label;
+  const badge = document.createElement("small");
+  badge.textContent = group;
+  node.append(image, name, badge);
+  target.append(node);
+  cards.set(key, node);
+  indexCard(node);
+  return node;
+}
+
+function observeSavedTextures() {
   for (const [key, entry] of Object.entries(pack.entries)) {
-    const card = textureCard(key, entry.group, key.split("/").at(-1).replaceAll("_", " "));
-    const target = card.querySelector("canvas").getContext("2d");
-    readImage(entry.data, target).catch(() => paintSample(target, key, entry.group));
+    observeCard(textureCard(key, entry.group, key.split("/").at(-1).replaceAll("_", " ")));
   }
 }
 
-function bindCard(card) {
-  card.addEventListener("click", () => {
+grid.addEventListener("click", (event) => {
+    const card = event.target.closest("[data-texture]");
+    if (!card) return;
     if (!multi) {
       showTexture(card).catch(() => notify(say("Unable to open texture.", "No se pudo abrir la textura.")));
       return;
@@ -187,13 +241,13 @@ function bindCard(card) {
     if (selected.has(key)) selected.delete(key);
     else selected.add(key);
     card.setAttribute("aria-pressed", String(selected.has(key)));
-  });
-}
+});
 
 function pixel(event) {
   const box = canvas.getBoundingClientRect();
-  return [Math.floor((event.clientX - box.left) * 16 / box.width), Math.floor((event.clientY - box.top) * 16 / box.height)]
-    .map((value) => Math.min(15, Math.max(0, value)));
+  const x = Math.floor((event.clientX - box.left) * canvas.width / box.width);
+  const y = Math.floor((event.clientY - box.top) * canvas.height / box.height);
+  return [Math.min(canvas.width - 1, Math.max(0, x)), Math.min(canvas.height - 1, Math.max(0, y))];
 }
 
 function drawPixel(x, y) {
@@ -201,11 +255,40 @@ function drawPixel(x, y) {
   else context.fillRect(x, y, 1, 1);
 }
 
+function fillRegion(x, y) {
+  const { width, height } = canvas;
+  const pixels = context.getImageData(0, 0, width, height);
+  const values = new Uint32Array(pixels.data.buffer);
+  const start = y * width + x;
+  const original = values[start];
+  context.fillRect(x, y, 1, 1);
+  const replacement = new Uint32Array(context.getImageData(x, y, 1, 1).data.buffer)[0];
+  if (original === replacement) return;
+  const pending = [start];
+  values[start] = replacement;
+  while (pending.length) {
+    const index = pending.pop();
+    const column = index % width;
+    for (const next of [
+      column > 0 ? index - 1 : -1,
+      column < width - 1 ? index + 1 : -1,
+      index >= width ? index - width : -1,
+      index < width * (height - 1) ? index + width : -1,
+    ]) {
+      if (values[next] !== original) continue;
+      values[next] = replacement;
+      pending.push(next);
+    }
+  }
+  context.putImageData(pixels, 0, 0);
+}
+
 function draw(event) {
   const [x, y] = pixel(event);
   context.fillStyle = dialog.querySelector("[data-texture-color]").value;
   if (brush === "fill") {
-    context.fillRect(0, 0, 16, 16);
+    if (!previousPixel) fillRegion(x, y);
+    previousPixel = [x, y];
     return;
   }
   const [fromX, fromY] = previousPixel || [x, y];
@@ -218,15 +301,16 @@ function draw(event) {
 
 function blobFor(input, outputSize, type) {
   const output = document.createElement("canvas");
-  output.width = outputSize;
-  output.height = outputSize;
+  const scale = outputSize ? outputSize / Math.max(input.width, input.height) : 1;
+  output.width = Math.max(1, Math.round(input.width * scale));
+  output.height = Math.max(1, Math.round(input.height * scale));
   const target = output.getContext("2d");
   target.imageSmoothingEnabled = false;
   if (type === "jpg") {
     target.fillStyle = "#000";
-    target.fillRect(0, 0, outputSize, outputSize);
+    target.fillRect(0, 0, output.width, output.height);
   }
-  target.drawImage(input, 0, 0, outputSize, outputSize);
+  target.drawImage(input, 0, 0, output.width, output.height);
   return new Promise((resolve) => output.toBlob(resolve, type === "jpg" ? "image/jpeg" : "image/" + type));
 }
 
@@ -236,100 +320,110 @@ function download(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function checksum(bytes) {
-  let crc = 0xffffffff;
-  for (const byte of bytes) {
-    crc ^= byte;
-    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
-  }
-  return (crc ^ 0xffffffff) >>> 0;
-}
-
-function zipHeader(length, fields) {
-  const view = new DataView(new ArrayBuffer(length));
-  for (const [offset, value, bytes] of fields) {
-    if (bytes === 4) view.setUint32(offset, value, true);
-    else view.setUint16(offset, value, true);
-  }
-  return view.buffer;
-}
-
-async function zip(files) {
-  const encoder = new TextEncoder();
-  const entries = [];
-  const central = [];
-  let offset = 0;
-  let centralSize = 0;
-  for (const [name, content] of files) {
-    const path = encoder.encode(name);
-    const bytes = new Uint8Array(await content.arrayBuffer());
-    const crc = checksum(bytes);
-    const local = zipHeader(30, [[0, 0x04034b50, 4], [4, 20, 2], [6, 0x800, 2], [14, crc, 4], [18, bytes.length, 4], [22, bytes.length, 4], [26, path.length, 2]]);
-    const directory = zipHeader(46, [[0, 0x02014b50, 4], [4, 20, 2], [6, 20, 2], [8, 0x800, 2], [16, crc, 4], [20, bytes.length, 4], [24, bytes.length, 4], [28, path.length, 2], [42, offset, 4]]);
-    entries.push(local, path, bytes);
-    central.push(directory, path);
-    offset += local.byteLength + path.length + bytes.length;
-    centralSize += directory.byteLength + path.length;
-  }
-  const end = zipHeader(22, [[0, 0x06054b50, 4], [8, files.length, 2], [10, files.length, 2], [12, centralSize, 4], [16, offset, 4]]);
-  return new Blob([...entries, ...central, end], { type: "application/zip" });
-}
-
 async function exportSelection() {
   if (!selected.size) {
     notify(say("Select at least one texture.", "Selecciona al menos una textura."));
     return;
   }
   const files = [];
-  for (const card of cards.filter((entry) => selected.has(entry.dataset.texture))) {
-    const preview = card.querySelector("canvas");
-    const source = imported.get(card.dataset.texture);
-    if (source) await readImported(source, preview.getContext("2d"));
-    const blob = await blobFor(preview, Number(size.value), format.value);
-    if (blob) files.push([card.dataset.texture.replaceAll("/", "-") + "." + format.value, blob]);
+  const source = document.createElement("canvas").getContext("2d");
+  for (const key of selected) {
+    const card = cards.get(key);
+    await drawTexture(key, card.dataset.textureGroup, source);
+    const blob = await blobFor(source.canvas, Number(size.value), format.value);
+    if (blob) files.push([key.replaceAll("/", "-") + "." + format.value, blob]);
   }
-  if (files.length) download(await zip(files), "skell-textures.zip");
+  if (files.length) download(await createZip(files), "skell-textures.zip");
 }
 
 async function exportPack() {
   const metadata = { pack: { description: pack.name, min_format: [75, 0], max_format: [75, 0] } };
   const files = [["pack.mcmeta", new Blob([JSON.stringify(metadata, null, 2)], { type: "application/json" })]];
-  for (const [key, entry] of Object.entries(pack.entries)) {
+  for (const entry of Object.values(pack.entries)) {
     const response = await fetch(entry.data);
-    files.push(["assets/minecraft/textures/" + (entry.path || folderFor[entry.group] + "/" + key + ".png"), await response.blob()]);
+    files.push(["assets/minecraft/textures/" + entry.path, await response.blob()]);
   }
-  download(await zip(files), (pack.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "skell-pack") + ".zip");
+  download(await createZip(files), (pack.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "skell-pack") + ".zip");
 }
+
+function visibleCards() {
+  return [...cards.values()].filter((card) => !card.hidden);
+}
+
+function viewerFilename() {
+  const target = Number(size.value);
+  const scale = target ? target / Math.max(canvas.width, canvas.height) : 1;
+  const dimensions = [canvas.width, canvas.height].map((value) => Math.max(1, Math.round(value * scale))).join("x");
+  return active.name.replaceAll("/", "-") + "_" + dimensions + "." + format.value;
+}
+
+function updateViewer() {
+  if (!active) return;
+  const cardList = visibleCards();
+  const index = cardList.indexOf(cards.get(active.name));
+  const path = imported.get(active.name)?.path || pack.entries[active.name]?.path || folderFor[active.group] + "/" + active.name + ".png";
+  dialog.querySelector("[data-texture-path]").textContent = "assets/minecraft/textures/" + path;
+  dialog.querySelector("[data-texture-dimensions]").textContent = say("Original", "Original") + " " + canvas.width + "×" + canvas.height;
+  dialog.querySelector("[data-texture-filename]").textContent = viewerFilename();
+  dialog.querySelector("[data-texture-position]").textContent = index < 0 ? "—" : index + 1 + " / " + cardList.length;
+  dialog.querySelector("[data-portal-action=previous-texture]").disabled = index <= 0;
+  dialog.querySelector("[data-portal-action=next-texture]").disabled = index < 0 || index >= cardList.length - 1;
+  for (const button of dialog.querySelectorAll("[data-viewer-size]")) button.setAttribute("aria-pressed", String(button.dataset.viewerSize === size.value));
+  for (const button of dialog.querySelectorAll("[data-viewer-format]")) button.setAttribute("aria-pressed", String(button.dataset.viewerFormat === format.value));
+}
+
+function pageTexture(direction) {
+  const visible = visibleCards();
+  const next = visible.indexOf(cards.get(active.name)) + direction;
+  if (visible[next]) return showTexture(visible[next]);
+}
+
+dialog.addEventListener("click", (event) => {
+  const option = event.target.closest("[data-viewer-size], [data-viewer-format]");
+  if (!option) return;
+  const control = option.hasAttribute("data-viewer-size") ? size : format;
+  control.value = option.dataset.viewerSize ?? option.dataset.viewerFormat;
+  control.dispatchEvent(new Event("change"));
+  updateViewer();
+});
 
 const actions = {
   multi: (button) => {
     multi = !multi;
     button.setAttribute("aria-pressed", String(multi));
-    if (multi) return;
+    if (multi) {
+      for (const card of cards.values()) card.setAttribute("aria-pressed", "false");
+      return;
+    }
     selected.clear();
-    for (const card of cards) card.setAttribute("aria-pressed", "false");
+    for (const card of cards.values()) card.removeAttribute("aria-pressed");
   },
   "close-texture": () => dialog.close(),
   "download-texture": async () => {
     const blob = await blobFor(canvas, Number(size.value), format.value);
-    if (blob) download(blob, active.name.replaceAll("/", "-") + "." + format.value);
+    if (blob) download(blob, viewerFilename());
   },
-  draw: () => { brush = "draw"; },
-  fill: () => { brush = "fill"; },
-  erase: () => { brush = "erase"; },
-  "reset-texture": () => imported.has(active.name) ? readImported(imported.get(active.name), context) : paintSample(context, active.name, active.group),
+  "previous-texture": () => pageTexture(-1),
+  "next-texture": () => pageTexture(1),
+  draw: () => setBrush("draw"),
+  fill: () => setBrush("fill"),
+  erase: () => setBrush("erase"),
+  "reset-texture": () => context.putImageData(textureBaseline, 0, 0),
   "save-texture": () => {
-    pack.entries[active.name] = { data: canvas.toDataURL("image/png"), group: active.group, path: imported.get(active.name)?.path || pack.entries[active.name]?.path };
-    if (setPack()) notify(say("Texture saved to pack.", "Textura guardada en el paquete."));
-    updatePackList();
+    const { name, group } = active;
+    const path = imported.get(name)?.path || pack.entries[name]?.path || folderFor[group] + "/" + name + ".png";
+    const entries = Object.fromEntries(Object.entries(pack.entries).filter(([, entry]) => entry.path !== path));
+    entries[name] = { data: canvas.toDataURL("image/png"), group, path };
+    if (!storePack({ ...pack, entries })) return;
+    observeSavedTextures();
+    filterCards();
+    notify(say("Texture saved to pack.", "Textura guardada en el paquete."));
   },
   "export-selection": exportSelection,
   "export-pack": exportPack,
-  "show-pack": (button) => {
-    packOnly = !packOnly;
-    button.setAttribute("aria-pressed", String(packOnly));
-    filterCards();
-  },
+  "hide-guide": () => { studio.querySelector("[data-studio-guide]").hidden = true; },
+  "show-textures": () => showPack(false),
+  "show-pack": () => showPack(true),
 };
 
 studio.addEventListener("click", async (event) => {
@@ -349,12 +443,21 @@ for (const button of categories) {
     filterCards();
   });
 }
-for (const card of cards) {
-  const target = card.querySelector("canvas").getContext("2d");
-  paintSample(target, card.dataset.texture, card.dataset.textureGroup);
-  bindCard(card);
+let searchFrame;
+search.addEventListener("input", () => {
+  cancelAnimationFrame(searchFrame);
+  searchFrame = requestAnimationFrame(filterCards);
+});
+
+function showPack(open) {
+  packOnly = open;
+  category = "all";
+  for (const option of categories) option.setAttribute("aria-pressed", String(option.dataset.textureCategory === "all"));
+  studio.querySelector("[data-portal-action=show-pack]").setAttribute("aria-pressed", String(open));
+  studio.querySelector("[data-portal-action=show-textures]").setAttribute("aria-pressed", String(!open));
+  filterCards();
 }
-search.addEventListener("input", filterCards);
+
 for (const [control, key] of [[format, "format"], [size, "size"]]) {
   control.addEventListener("change", () => {
     try {
@@ -365,9 +468,8 @@ for (const [control, key] of [[format, "format"], [size, "size"]]) {
 if (editing) {
   packName.value = pack.name;
   packName.addEventListener("change", () => {
-    pack.name = packName.value.trim() || "My resource pack";
+    storePack({ ...pack, name: packName.value.trim() || "My resource pack" });
     packName.value = pack.name;
-    setPack();
   });
   canvas.addEventListener("pointerdown", (event) => {
     previousPixel = undefined;
@@ -380,91 +482,61 @@ if (editing) {
   studio.querySelector("[data-texture-import]").addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
     try {
-      await readImage(url, context);
-      active = { name: file.name.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9_-]/g, "_") || "custom", group: "block" };
-      dialog.querySelector("[data-texture-title]").textContent = active.name;
-      dialog.showModal();
+      await drawBlob(file, context);
+      const name = file.name.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9_-]/g, "_") || "custom";
+      openEditor(name, "block", name);
     } catch {
       notify(say("Unable to read this image.", "No se pudo leer la imagen."));
     } finally {
-      URL.revokeObjectURL(url);
       event.target.value = "";
     }
   });
-  setPack();
-  updatePackList();
+  packCount.textContent = say("Textures", "Texturas") + ": " + Object.keys(pack.entries).length;
 }
 
-function catalogDirectory(bytes) {
-  const view = new DataView(bytes);
-  let tail = bytes.byteLength - 22;
-  const lower = Math.max(0, tail - 65535);
-  while (tail >= lower && view.getUint32(tail, true) !== 0x06054b50) tail -= 1;
-  if (tail < lower) throw new Error("ZIP directory missing");
-  const count = view.getUint16(tail + 10, true);
-  let cursor = view.getUint32(tail + 16, true);
-  const decode = new TextDecoder();
-  const entries = [];
-  for (let i = 0; i < count; i += 1) {
-    if (view.getUint32(cursor, true) !== 0x02014b50) throw new Error("Invalid ZIP entry");
-    const nameLength = view.getUint16(cursor + 28, true);
-    const path = decode.decode(new Uint8Array(bytes, cursor + 46, nameLength));
-    const start = view.getUint32(cursor + 42, true);
-    const method = view.getUint16(cursor + 10, true);
-    const length = view.getUint32(cursor + 20, true);
-    const uncompressed = view.getUint32(cursor + 24, true);
-    cursor += 46 + nameLength + view.getUint16(cursor + 30, true) + view.getUint16(cursor + 32, true);
-    const match = /^assets\/minecraft\/textures\/(block|item|gui|entity|particle)\/([a-z0-9_/-]+)\.png$/.exec(path);
-    if (!match || ![0, 8].includes(method) || uncompressed > 4_000_000 || length > 4_000_000) continue;
-    if (view.getUint32(start, true) !== 0x04034b50) continue;
-    const dataOffset = start + 30 + view.getUint16(start + 26, true) + view.getUint16(start + 28, true);
-    const group = match[1] === "gui" ? "hud" : match[1];
-    const label = match[2].split("/").at(-1).replaceAll("_", " ");
-    entries.push({ key: group + "/" + match[2], label, group, path: path.slice("assets/minecraft/textures/".length), method, bytes: new Uint8Array(bytes, dataOffset, length) });
-  }
-  return entries;
+function paintThumbnail(card) {
+  const key = card.dataset.texture;
+  drawTexture(key, card.dataset.textureGroup, card.querySelector("canvas").getContext("2d"), true).catch(() => {});
 }
 
-async function readImported(entry, target) {
-  let image = new Blob([entry.bytes], { type: "image/png" });
-  if (entry.method === 8) {
-    const stream = image.stream().pipeThrough(new DecompressionStream("deflate-raw"));
-    image = await new Response(stream, { headers: { "Content-Type": "image/png" } }).blob();
-  }
-  const url = URL.createObjectURL(image);
-  try {
-    await readImage(url, target);
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
-
-const observer = new IntersectionObserver((entries) => {
+const observer = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
-    const card = entry.target;
-    observer.unobserve(card);
-    readImported(imported.get(card.dataset.texture), card.querySelector("canvas").getContext("2d")).catch(() => {});
+    observer.unobserve(entry.target);
+    paintThumbnail(entry.target);
   }
-}, { rootMargin: "120px" });
+}, { rootMargin: "120px" }) : null;
+
+function observeCard(card) {
+  if (observer) observer.observe(card);
+  else paintThumbnail(card);
+}
+
+for (const card of cards.values()) {
+  indexCard(card);
+  observeCard(card);
+}
+if (editing) observeSavedTextures();
 
 studio.querySelector("[data-archive-import]").addEventListener("change", async (event) => {
   const file = event.target.files[0];
   if (!file) return;
   try {
     if (file.size > 160_000_000) throw new Error("Archive too large");
-    const entries = catalogDirectory(await file.arrayBuffer());
+    const entries = readTextureCatalog(await file.arrayBuffer());
     if (!entries.length) throw new Error("No textures found");
+    const fragment = document.createDocumentFragment();
     for (const entry of entries) {
       imported.set(entry.key, entry);
-      const card = textureCard(entry.key, entry.group, entry.label);
-      observer.observe(card);
+      observeCard(textureCard(entry.key, entry.group, entry.label, fragment));
     }
+    grid.append(fragment);
+    const counts = new Map();
+    for (const card of cards.values()) counts.set(card.dataset.textureGroup, (counts.get(card.dataset.textureGroup) || 0) + 1);
     for (const button of categories) {
       const key = button.dataset.textureCategory;
-      button.querySelector("small").textContent = String(cards.filter((card) => key === "all" || card.dataset.textureGroup === key).length);
+      button.querySelector("small").textContent = String(key === "all" ? cards.size : counts.get(key) || 0);
     }
     filterCards();
     notify(say("Textures imported for this tab.", "Texturas importadas para esta pestaña."));
@@ -474,3 +546,5 @@ studio.querySelector("[data-archive-import]").addEventListener("change", async (
     event.target.value = "";
   }
 });
+
+if (editing) showPack(false);

@@ -33,7 +33,14 @@ function setupDialog() {
   const close = dialog.querySelector(".portal-close");
   close.focus({ preventScroll: true });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") close.click();
+    if (event.key === "Escape") {
+      if (event.target === dialog.querySelector("[data-portal-search]") && event.target.value) {
+        event.target.value = "";
+        event.target.dispatchEvent(new Event("input"));
+        return;
+      }
+      close.click();
+    }
     if (event.key !== "Tab") return;
     const controls = [...dialog.querySelectorAll("a[href], button:not(:disabled), input:not(:disabled), select")].filter((control) => control.getClientRects().length);
     const first = controls[0], last = controls.at(-1);
@@ -50,9 +57,11 @@ function setupDialog() {
   if (!search) return;
   const content = [...dialog.querySelectorAll("[data-search-item]")];
   const links = [...dialog.querySelectorAll("[data-sidebar-link]")];
+  const normalized = (value) => value.normalize("NFD").replace(/\p{Mark}/gu, "").toLocaleLowerCase(document.documentElement.lang);
+  const searchable = (content.length ? content : links).map((entry) => [entry, normalized(entry.textContent)]);
   search.addEventListener("input", () => {
-    const query = search.value.trim().toLowerCase();
-    for (const entry of content.length ? content : links) entry.hidden = !entry.textContent.toLowerCase().includes(query);
+    const query = normalized(search.value.trim());
+    for (const [entry, label] of searchable) entry.hidden = !label.includes(query);
     for (const group of dialog.querySelectorAll("[data-faq-group]")) group.hidden = !group.querySelector("[data-search-item]:not([hidden])");
   });
   for (const link of links) {

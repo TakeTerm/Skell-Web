@@ -129,13 +129,44 @@ function setupNavigation() {
   }
 }
 
-function openStudioFromHash() {
-  if (!["#studio", "#studio-demo"].includes(location.hash)) return;
+function setupStudio() {
   const studio = document.querySelector("#studio");
-  if (studio) studio.open = true;
+  if (!studio) return;
+  const panel = studio.querySelector("[data-studio-fragment]");
+  const status = panel.querySelector("[data-studio-status]");
+  const spanish = document.documentElement.lang === "es";
+  let requested = false;
+  let loaded = false;
+
+  function openFromHash() {
+    if (["#studio", "#studio-demo"].includes(location.hash)) studio.open = true;
+  }
+
+  studio.addEventListener("toggle", async () => {
+    if (!studio.open || requested || loaded) return;
+    requested = true;
+    panel.setAttribute("aria-busy", "true");
+    status.textContent = spanish ? "Cargando estudio…" : "Loading studio…";
+    try {
+      const [response, { initFeatures }] = await Promise.all([fetch(panel.dataset.studioFragment), import("./main.js")]);
+      if (!response.ok) throw new Error("Studio unavailable");
+      const fragment = await response.text();
+      panel.innerHTML = fragment;
+      initFeatures(panel);
+      loaded = true;
+      if (location.hash === "#studio-demo") panel.querySelector("#studio-demo").scrollIntoView();
+    } catch {
+      panel.replaceChildren(status);
+      status.textContent = spanish ? "Cierra y vuelve a abrir para reintentar." : "Close and reopen to retry.";
+    } finally {
+      requested = false;
+      panel.removeAttribute("aria-busy");
+    }
+  });
+  openFromHash();
+  addEventListener("hashchange", openFromHash);
 }
 
 if (preview && !preview.closest(".portal-scene")) setupPreview(preview);
 setupNavigation();
-openStudioFromHash();
-addEventListener("hashchange", openStudioFromHash);
+setupStudio();

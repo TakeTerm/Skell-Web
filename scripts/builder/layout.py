@@ -82,6 +82,7 @@ def head(site, page, title, description, styles, structured_data=""):
         tag("link", rel="manifest", href="/assets/brand/site.webmanifest"),
         tag("link", rel="preload", href="/assets/fonts/bricolage-grotesque-latin-wght-normal.woff2", as_="font", type="font/woff2", crossorigin=True),
         tag("link", rel="preload", href="/assets/fonts/inter-latin-wght-normal.woff2", as_="font", type="font/woff2", crossorigin=True),
+        tag("link", rel="preload", href="/assets/fonts/instrument-serif-latin.woff", as_="font", type="font/woff", crossorigin=True) if page == "home" else "",
         join(tag("link", rel="stylesheet", href=f"/assets/{name}") for name in styles),
         structured_data,
     ]

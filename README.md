@@ -123,6 +123,6 @@ The generated pages use root-relative paths for assets and navigation. Serve the
 
 I maintain Skell Web independently. If you find a problem, [open an issue](https://github.com/TakeTerm/Skell-Web/issues) with the affected page, your browser, and the steps to reproduce it. For a translation issue, include the language and the text that needs attention.
 
-I use Bricolage Grotesque, Inter, and JetBrains Mono under the SIL Open Font License. Their license texts are included in [`src/assets/fonts/`](src/assets/fonts/).
+I use Bricolage Grotesque, Instrument Serif, Inter, and JetBrains Mono under the SIL Open Font License. Their license texts are included in [`src/assets/fonts/`](src/assets/fonts/).
 
 © 2026 Take. All rights reserved. The Skell Client name, logo, website content, interface designs, and source code may be reproduced, distributed, or used only with my prior written permission. Third-party fonts retain their respective licenses.

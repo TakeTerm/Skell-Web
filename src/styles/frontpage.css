@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/assets/fonts/instrument-serif-latin.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 html:has(.reference-header) {
   background: #000;
   scroll-padding-top: 88px;
@@ -213,7 +221,7 @@ body:has(.reference-header) .backdrop {
 
 .reference-hero {
   position: relative;
-  padding: clamp(156px, 14vw, 215px) 0 78px;
+  padding: clamp(156px, 14.38vw, 196px) 0 80px;
   isolation: isolate;
   text-align: center;
 }
@@ -313,36 +321,36 @@ body:has(.reference-header) .backdrop {
   margin: 0;
   color: #f6f6f6;
   font-family: "Instrument Serif", "Times New Roman", serif;
-  font-size: clamp(64px, 7.2vw, 111px);
-  line-height: .88;
-  letter-spacing: -.089em;
+  font-size: clamp(64px, 7.2vw, 96px);
+  line-height: .9;
+  letter-spacing: -.035em;
   font-weight: 400;
 }
 
 .reference-hero h1 span {
   display: block;
-  transform: scaleX(.87);
 }
 
 .reference-hero__lead {
-  max-width: min(400px, calc(100% - 52px));
-  margin: 33px auto 24px;
+  max-width: min(454px, calc(100% - 52px));
+  margin: 28px auto 24px;
   color: #b7b7b7;
   font-size: 14px;
-  line-height: 1.25;
+  line-height: 1.23;
   text-wrap: balance;
 }
 
 .reference-button--hero {
-  min-height: 41px;
+  min-width: 156px;
+  min-height: 40px;
   padding-inline: 18px;
   border-radius: 999px;
   font-size: 13px;
 }
 
 .reference-stage {
-  width: min(1210px, calc(100% - 100px));
-  margin: 57px auto 0;
+  width: min(1204px, calc(100% - 100px));
+  margin: 56px auto 0;
   perspective: 1250px;
 }
 
@@ -360,7 +368,7 @@ body:has(.reference-header) .backdrop {
 .reference-section {
   position: relative;
   margin: 0 2.2vw;
-  padding: clamp(72px, 9vw, 122px) 0;
+  padding: clamp(72px, 8.81vw, 120px) 0;
   border-top: 1px solid #ffffff19;
   border-inline: 1px solid #ffffff0c;
 }
@@ -397,7 +405,7 @@ body:has(.reference-header) .backdrop {
 }
 
 .reference-width {
-  width: min(1188px, calc(100% - 8.6vw));
+  width: min(1188px, calc(100% - 8.3vw));
   margin: auto;
 }
 
@@ -409,9 +417,9 @@ body:has(.reference-header) .backdrop {
 .reference-heading h2 {
   color: #f8f8f8;
   font-weight: 430;
-  font-size: clamp(40px, 5.1vw, 75px);
-  line-height: 1.07;
-  letter-spacing: -.069em;
+  font-size: clamp(40px, 5.3vw, 72px);
+  line-height: 1;
+  letter-spacing: -.065em;
   text-wrap: balance;
 }
 
@@ -575,7 +583,7 @@ body:has(.reference-header) .backdrop {
 }
 
 .reference-lab {
-  margin-top: 24px;
+  margin-top: 17px;
 }
 
 .reference-lab > summary {
@@ -615,7 +623,7 @@ body:has(.reference-header) .backdrop {
   display: flex;
   width: max-content;
   max-width: 100%;
-  margin: -12px auto 25px;
+  margin: 0 auto 25px;
   padding: 4px;
   border: 1px solid #ffffff19;
   border-radius: 999px;
@@ -623,6 +631,7 @@ body:has(.reference-header) .backdrop {
 }
 
 .access-toggle button {
+  min-width: 174px;
   min-height: 29px;
   padding: 4px 14px;
   border: 1px solid transparent;
@@ -703,6 +712,7 @@ body:has(.reference-header) .backdrop {
 }
 
 .access-card__amount strong {
+  font-variant-numeric: tabular-nums;
   color: #ededed;
   font-size: clamp(38px, 4.6vw, 67px);
   font-weight: 440;
@@ -754,10 +764,10 @@ body:has(.reference-header) .backdrop {
 
 .reference-help {
   display: grid;
-  grid-template-columns: 1fr 2.05fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.05fr);
   align-items: start;
   gap: 16px;
-  margin-top: 54px;
+  margin-top: 56px;
 }
 
 .reference-supports {
@@ -775,7 +785,7 @@ body:has(.reference-header) .backdrop {
 .reference-support {
   display: block;
   padding: 17px 20px;
-  min-height: 108px;
+  min-height: 116px;
 }
 
 .reference-support:hover,
@@ -903,7 +913,7 @@ body:has(.reference-header) .site-footer__brand p {
 
 @media (max-width: 590px) {
   .reference-hero { padding-top: 139px; padding-bottom: 55px; }
-  .reference-hero h1 { font-size: clamp(57px, 13.5vw, 77px); }
+  .reference-hero h1 { font-size: clamp(58px, 15vw, 77px); }
   .reference-hero__lead { margin-top: 21px; font-size: 13px; }
   .reference-stage { margin-top: 41px; }
   .preview-caption { margin-top: 24px; font-size: 12px; }
@@ -915,7 +925,9 @@ body:has(.reference-header) .site-footer__brand p {
   .reference-tiles .reference-tile { grid-column: 1; min-height: 228px; }
   .reference-tile__copy { min-height: 75px; padding: 10px 15px 16px; }
   .access-grid { grid-template-columns: 1fr; }
-  .access-card { min-height: 278px; }
+  .access-card { min-height: 0; }
+  .access-toggle button { min-width: 0; }
+  .reference-support { min-height: 0; }
   .access-card ul { grid-template-columns: 1fr 1fr; }
   .reference-help { margin-top: 32px; }
   .reference-supports, .reference-faq { grid-template-columns: 1fr; gap: 8px; }
@@ -925,4 +937,34 @@ body:has(.reference-header) .site-footer__brand p {
 
 @media (prefers-reduced-motion: reduce) {
   .reference-intro, .reference-blueprint .reference-widget { animation: none !important; }
+}
+
+.reference-lab__status:not(:empty) {
+  padding: 12px 0;
+  color: #aaa;
+  text-align: center;
+}
+
+#features .reference-heading {
+  margin-bottom: 40px;
+}
+
+#pricing .reference-heading {
+  margin-bottom: 30px;
+}
+
+.access-toggle button span {
+  color: #aaa;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 811px) {
+  #features .reference-width {
+    position: relative;
+  }
+
+  .reference-lab:not([open]) {
+    position: absolute;
+    inset: 100% 0 auto;
+  }
 }

@@ -61,7 +61,7 @@ def heading(kicker, title, lead):
 
 
 def button(label, action, primary=False):
-    return tag("button", text(label), type="button", class_="portal-button" + (" portal-button--white" if primary else ""), data_portal_action=action)
+    return tag("button", text(label), type="button", class_="portal-button" + (" portal-button--white" if primary else ""), data_portal_action=action, data_brush=action if action in ("draw", "fill", "erase") else None)
 
 
 def field(label, field_type, name, placeholder="", **attributes):
@@ -80,7 +80,7 @@ def panel_grid(*panels):
     return tag("div", join(panels), class_="portal-panel-grid")
 
 
-def sidebar(site, prefix, current, groups, search_label):
+def sidebar(site, prefix, current, groups, search_label, title=""):
     spanish = site.language == "es"
     sections = []
     for group, entries in groups:
@@ -90,12 +90,12 @@ def sidebar(site, prefix, current, groups, search_label):
             target = f"#{key}" if prefix is None else site.url(prefix + key)
             links.append(tag("a", icon(glyph, 16) + text(label), href=target, aria_current="page" if key == current else None, data_sidebar_link=True))
         sections.append(tag("div", tag("p", text(group), class_="portal-kicker") + join(links), class_="portal-side-group"))
-    return tag("aside", search(site, search_label) + join(sections), class_="portal-side")
+    return tag("aside", (tag("p", "— " + text(title), class_="portal-side__title portal-kicker") if title else "") + search(site, search_label) + join(sections), class_="portal-side")
 
 
-def overlay(site, label, content, side="", compact=False):
+def overlay(site, label, content, side="", compact=False, kind=""):
     close = tag("a", icon("close", 17), href=site.url("home"), class_="portal-close", aria_label=local(site, "Close", "Cerrar"))
-    surface = tag("div", close + side + tag("div", content, class_="portal-content"), class_="portal-dialog" + (" portal-dialog--compact" if compact else "") + (" portal-dialog--sidebar" if side else ""), role="dialog", aria_modal="true", aria_label=label)
+    surface = tag("div", close + side + tag("div", content, class_="portal-content"), class_="portal-dialog" + (" portal-dialog--compact" if compact else "") + (" portal-dialog--sidebar" if side else "") + (" portal-dialog--" + kind if kind else ""), role="dialog", aria_modal="true", aria_label=label)
     scene = tag("div", hero(site, COPY[site.language]), class_="portal-scene", inert=True, aria_hidden="true")
     return scene + tag("div", surface, class_="portal-overlay")
 
@@ -162,7 +162,7 @@ def partnership(site, route):
     key = route.partition("/")[2] or "become"
     es = site.language == "es"
     groups = tuple((spanish if es else english, entries) for english, spanish, entries in PARTNER)
-    side = sidebar(site, "partnership/", key, groups, local(site, "Search sections…", "Buscar secciones…"))
+    side = sidebar(site, "partnership/", key, groups, local(site, "Search sections…", "Buscar secciones…"), local(site, "Partnership", "Colaboraciones"))
     labels = {slug: spanish if es else english for _, entries in groups for slug, english, spanish, _ in entries}
     title = labels[key]
     lead = local(site, "Explore the Skell creator program and its tools.", "Explora el programa de creadores de Skell y sus herramientas.")
@@ -208,13 +208,13 @@ def partnership(site, route):
         lead = local(site, "Explore how the referral dashboard is organized.", "Descubre cómo se organiza el panel de referidos.")
         content = panel_grid(*(panel(labels[slug], "", link(local(site, "Open", "Abrir"), site.url("partnership/" + slug), "portal-text-link", "arrow-right")) for slug in ("promo", "media", "payouts", "referral")))
         content += panel(local(site, "How it works", "Cómo funciona"), local(site, "Create a partner draft, preview a code, and open the earnings panel.", "Crea un borrador, previsualiza un código y abre el panel de ingresos."))
-    return title, overlay(site, title, heading(local(site, "Partnership", "Colaboraciones"), title, lead) + content, side)
+    return title, overlay(site, title, heading(labels[key], title, lead) + content, side, kind="partnership")
 
 
 def knowledge(site):
     title = local(site, "Knowledge base", "Base de conocimiento")
     groups = tuple((str(index), english, spanish, "book") for index, (english, spanish, _) in enumerate(FAQ_GROUPS))
-    side = sidebar(site, None, "0", ((local(site, "Sections", "Secciones"), groups),), local(site, "Search questions", "Buscar preguntas"))
+    side = sidebar(site, None, "0", ((local(site, "Sections", "Secciones"), groups),), local(site, "Search questions", "Buscar preguntas"), title)
     faq = COPY[site.language]["faq"]
     content = []
     for index, (english, spanish, entries) in enumerate(FAQ_GROUPS):
@@ -222,13 +222,13 @@ def knowledge(site):
         cards = join(tag("article", tag("span", f"{number + 1:02d}") + tag("div", tag("h3", text(faq[entry][0])) + tag("p", text(faq[entry][1]))), class_="portal-question", data_search_item=True) for number, entry in enumerate(entries))
         content.append(tag("section", tag("h2", text(group_title) + tag("small", str(len(entries)))) + cards, id=str(index), class_="portal-question-group", data_faq_group=True))
     body = heading("", title, local(site, "Answers about the client, installation, account, and features.", "Respuestas sobre el cliente, la instalación, la cuenta y las funciones.")) + join(content)
-    return title, overlay(site, title, body, side)
+    return title, overlay(site, title, body, side, kind="knowledge")
 
 
 def legal(site, route):
     key = route.split("/")[-1]
     title = next(local(site, english, spanish) for slug, english, spanish, _ in LEGAL if slug == key)
-    side = sidebar(site, "legal/", key, ((local(site, "Documents", "Documentos"), LEGAL),), local(site, "Search the document", "Buscar en el documento"))
+    side = sidebar(site, "legal/", key, ((local(site, "Documents", "Documentos"), LEGAL),), local(site, "Search the document", "Buscar en el documento"), "Legal")
     if key == "contacts":
         repo = "https://github.com/TakeTerm/Skell-Web"
         entries = (("GitHub", repo, local(site, "Source and project updates.", "Código y novedades del proyecto.")), (local(site, "Support", "Ayuda"), repo + "/issues", local(site, "Report an issue with the site.", "Reporta un problema con el sitio.")))
@@ -241,7 +241,42 @@ def legal(site, route):
             "prices": (("Demo plans", "Planes de demostración", "The displayed amounts are examples for the checkout preview. This website does not accept payments.", "Los importes son ejemplos para previsualizar la compra. Este sitio no acepta pagos."),),
         }
         content = join(tag("section", panel(local(site, en_title, es_title), local(site, en_body, es_body)), data_search_item=True) for en_title, es_title, en_body, es_body in blocks[key])
-    return title, overlay(site, title, heading(local(site, "Legal", "Legal"), title, "") + content, side)
+    return title, overlay(site, title, heading("", title, "") + content, side, kind="legal")
+
+
+def texture_dialog(site, editing):
+    title = tag("h2", "", id="texture-dialog-title", data_texture_title=True)
+    path = tag("p", "", class_="texture-viewer__path", data_texture_path=True)
+    pages = tag("div",
+        button("‹", "previous-texture") + tag("span", "", data_texture_position=True)
+        + button("›", "next-texture") + button("×", "close-texture"),
+        class_="texture-viewer__paging",
+    )
+    head = tag("div", tag("div", title + path) + pages, class_="studio-editor__head")
+    canvas = tag("canvas", "", width=16, height=16, data_texture_canvas=True, aria_label=local(site, "Texture preview", "Vista de textura"))
+    preview = tag("div", canvas + tag("p", "", data_texture_dimensions=True), class_="texture-viewer__canvas")
+    sizes = tag("div", join(
+        tag("button", label, type="button", class_="portal-button", data_viewer_size=value, aria_pressed="false")
+        for value, label in ((0, local(site, "Original", "Original")), (64, "64"), (128, "128"), (256, "256"), (512, "512"), (1024, "1024"))
+    ), class_="texture-viewer__sizes")
+    formats = tag("div", join(
+        tag("button", label, type="button", class_="portal-button", data_viewer_format=value, aria_pressed="false")
+        for value, label in (("png", "PNG"), ("webp", "WebP"), ("jpg", "JPEG"))
+    ), class_="texture-viewer__formats")
+    tools = tag("p", local(site, "Size", "Tamaño"), class_="portal-kicker") + sizes + tag("p", local(site, "Format", "Formato"), class_="portal-kicker") + formats
+    if editing:
+        tools += tag("p", local(site, "Brush", "Pincel"), class_="portal-kicker")
+        tools += tag("div",
+            tag("input", type="color", value="#ffab4c", data_texture_color=True, aria_label=local(site, "Brush colour", "Color del pincel"))
+            + button(local(site, "Pencil", "Lápiz"), "draw") + button(local(site, "Fill", "Rellenar"), "fill")
+            + button(local(site, "Erase", "Borrar"), "erase") + button(local(site, "Reset", "Restablecer"), "reset-texture"),
+            class_="studio-editor__tools",
+        )
+    view = tag("div", preview + tag("div", tools, class_="texture-viewer__options"), class_="texture-viewer__body")
+    file_name = tag("div", tag("p", local(site, "File", "Archivo"), class_="portal-kicker") + tag("span", "", data_texture_filename=True))
+    actions = tag("div", (button(local(site, "Save to pack", "Guardar en el paquete"), "save-texture") if editing else "") + button(local(site, "Download image", "Descargar imagen"), "download-texture", True), class_="texture-viewer__actions")
+    foot = tag("div", file_name + actions, class_="texture-viewer__footer")
+    return tag("dialog", head + view + foot, class_="studio-editor texture-viewer", data_texture_dialog=True, aria_labelledby="texture-dialog-title")
 
 
 def studio(site, route):
@@ -253,25 +288,35 @@ def studio(site, route):
     categories = join(tag("button", icon(glyph, 16) + text(label) + tag("small", str(count)), type="button", data_texture_category=key, aria_pressed="true" if key == "all" else "false") for key, label, glyph, count in category_list)
     filters = tag("aside", tag("p", local(site, "Categories", "Categorías"), class_="portal-kicker") + categories, class_="studio-categories")
     format_options = tag("select", join(tag("option", fmt, value=fmt.lower()) for fmt in ("PNG", "JPG", "WEBP")), data_texture_format=True, aria_label=local(site, "Format", "Formato"))
-    size_options = tag("select", join(tag("option", str(size), value=size, selected=size == 512) for size in (16, 32, 64, 128, 256, 512, 1024)), data_texture_size=True, aria_label=local(site, "Size", "Tamaño"))
+    size_options = tag("select", join(tag("option", str(size) if size else local(site, "Original", "Original"), value=size, selected=size == 512) for size in (0, 16, 32, 64, 128, 256, 512, 1024)), data_texture_size=True, aria_label=local(site, "Size", "Tamaño"))
     controls = tag("div", search(site, local(site, "Search: diamond, heart, stone…", "Buscar: diamante, corazón, piedra…")) + size_options + format_options + button(local(site, "Select several", "Seleccionar varias"), "multi") + button(local(site, "Download .zip", "Descargar .zip"), "export-selection", True), class_="studio-tools")
     cards = []
     for group, items in TEXTURES.items():
         for name in items:
             token = name.lower().replace(" ", "_")
             canvas = tag("canvas", "", width=16, height=16, aria_hidden="true")
-            cards.append(tag("button", tag("span", canvas, class_="studio-texture__image") + tag("b", text(name)) + tag("small", group), class_="studio-texture", type="button", data_texture=token, data_texture_group=group, aria_pressed="false"))
-    grid = tag("div", filters + tag("div", controls + tag("div", join(cards), class_="studio-grid") + tag("p", local(site, "No matching textures", "No hay texturas coincidentes"), data_studio_empty=True, hidden=True), class_="studio-results"), class_="studio-layout")
+            cards.append(tag("button", tag("span", canvas, class_="studio-texture__image") + tag("b", text(name)) + tag("small", group), class_="studio-texture", type="button", data_texture=token, data_texture_group=group))
+    results = tag("div", controls + tag("div", join(cards), class_="studio-grid") + tag("p", local(site, "No matching textures", "No hay texturas coincidentes"), data_studio_empty=True, hidden=True), class_="studio-results")
     archive_label = local(site, "Import ZIP or Minecraft JAR", "Importar ZIP o JAR de Minecraft")
     archive = tag("label", text(archive_label) + tag("input", type="file", accept=".zip,.jar", data_archive_import=True, aria_label=archive_label), class_="portal-button studio-import")
-    editor = tag("div", archive, class_="studio-import-row")
+    editor = ""
+    imports = archive
     if editing:
-        pack_info = tag("div", tag("div", tag("p", local(site, "You are editing the pack", "Estás editando el paquete"), class_="portal-kicker") + tag("input", value="My resource pack", aria_label=local(site, "Pack name", "Nombre del paquete"), data_pack_name=True, maxlength=45) + tag("p", "", data_pack_count=True)) + tag("div", button(local(site, "My pack", "Mi paquete"), "show-pack") + button(local(site, "Download .zip", "Descargar .zip"), "export-pack", True)), class_="studio-pack")
+        pack_info = tag("div", tag("div", tag("p", local(site, "You are editing the pack", "Estás editando el paquete"), class_="portal-kicker") + tag("input", value="My resource pack", aria_label=local(site, "Pack name", "Nombre del paquete"), data_pack_name=True, maxlength=45) + tag("p", "", data_pack_count=True)) + tag("div", button(local(site, "Download .zip", "Descargar .zip"), "export-pack", True)), class_="studio-pack")
         steps = panel_grid(*(panel(local(site, a, b), local(site, c, d)) for a, b, c, d in (("Pick a texture", "Elige una textura", "Open a sample or upload your own.", "Abre una muestra o importa la tuya."), ("Repaint it", "Repíntala", "Draw, fill, or erase pixels.", "Pinta, rellena o borra píxeles."), ("Save to pack", "Guarda en el paquete", "Keep your changes in this browser.", "Conserva los cambios en este navegador."), ("Download the ZIP", "Descarga el ZIP", "Move the file to the resourcepacks folder.", "Mueve el archivo a la carpeta resourcepacks."))))
-        custom = tag("label", local(site, "Import image", "Importar imagen") + tag("input", type="file", accept="image/png,image/jpeg,image/webp", data_texture_import=True), class_="portal-button")
-        editor = pack_info + tag("div", steps + custom + archive, class_="studio-guide")
-    dialog = tag("dialog", tag("div", tag("h2", "", data_texture_title=True) + button("×", "close-texture"), class_="studio-editor__head") + tag("canvas", "", width=16, height=16, data_texture_canvas=True, aria_label=local(site, "Texture preview", "Vista de textura")) + tag("div", tag("input", type="color", value="#ffab4c", data_texture_color=True, aria_label=local(site, "Brush colour", "Color del pincel")) + button(local(site, "Pencil", "Lápiz"), "draw") + button(local(site, "Fill", "Rellenar"), "fill") + button(local(site, "Erase", "Borrar"), "erase") + button(local(site, "Reset", "Restablecer"), "reset-texture") + button(local(site, "Save to pack", "Guardar en el paquete"), "save-texture", True) if editing else "", class_="studio-editor__tools") + button(local(site, "Download image", "Descargar imagen"), "download-texture"), class_="studio-editor", data_texture_dialog=True)
-    contents = heading("Studio", title, lead) + tag("nav", tabs, class_="studio-tabs") + editor + grid + dialog + tag("p", "", role="status", class_="studio-status", data_studio_status=True, hidden=True)
+        custom = tag("label", local(site, "Import image", "Importar imagen") + tag("input", type="file", accept="image/png,image/jpeg,image/webp", data_texture_import=True), class_="portal-button studio-import")
+        imports = custom + archive
+        guide_title = tag("h2", local(site, "How to make your own resource pack", "Cómo crear un paquete de recursos"))
+        guide = tag("div", tag("div", guide_title + button("×", "hide-guide"), class_="studio-guide__header") + steps, class_="studio-guide", data_studio_guide=True)
+        views = tag("div", button(local(site, "Textures", "Texturas"), "show-textures") + button(local(site, "My pack", "Mi paquete"), "show-pack"), class_="studio-pack-tabs")
+        editor = pack_info + views + guide
+    dialog = texture_dialog(site, editing)
+    home = link(local(site, "Home", "Inicio"), site.url("home"), "portal-button studio-home", "arrow-left")
+    studio_head = tag("div", heading("Studio", title, lead) + home, class_="studio-heading")
+    imports_panel = tag("div", tag("p", local(site, "Create" if editing else "Import", "Crear" if editing else "Importar"), class_="portal-kicker") + imports, class_="studio-categories studio-imports")
+    rail = tag("div", imports_panel + filters if editing else filters + imports_panel, class_="studio-rail")
+    grid = tag("div", rail + results, class_="studio-layout")
+    contents = studio_head + tag("nav", tabs, class_="studio-tabs") + editor + grid + dialog + tag("p", "", role="status", class_="studio-status", data_studio_status=True, hidden=True)
     return title, tag("div", contents, class_="studio-shell", data_texture_studio=route)
 
 

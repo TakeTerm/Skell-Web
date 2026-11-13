@@ -8,7 +8,7 @@ from .widgets import control_templates
 COPY = {
     "en": {
         "headline": ("Skell changes", "the game"),
-        "lead": "An independent Minecraft client with a customizable interface, refined visuals, and tools that fit the way you play.",
+        "lead": "A Minecraft client with a customizable interface, refined visuals, and tools for smoother gameplay. Explore its settings and HUD directly in the browser.",
         "explore": "Explore Skell",
         "nav": ("Features", "Studio", "Contact"),
         "studioMenu": ("Mods menu", "HUD editor", "Module reference"),
@@ -58,7 +58,7 @@ COPY = {
     },
     "es": {
         "headline": ("Skell cambia", "el juego"),
-        "lead": "Un cliente independiente de Minecraft con una interfaz personalizable, efectos visuales y herramientas que se adaptan a tu forma de jugar.",
+        "lead": "Un cliente de Minecraft con una interfaz personalizable, efectos visuales y herramientas para jugar con más fluidez. Explora sus ajustes y el HUD desde el navegador.",
         "explore": "Explorar Skell",
         "nav": ("Funciones", "Estudio", "Ayuda"),
         "studioMenu": ("Menú de módulos", "Editor HUD", "Referencia de módulos"),
@@ -274,7 +274,7 @@ def feature_art(index, preview):
     return tag("div", art, class_=f"reference-tile__art art-{index + 1}", aria_hidden="true")
 
 
-def features(site, copy, full_demo):
+def features(site, copy):
     title, lead, studio = copy["features"]
     targets = ("interface", "hud-editor", "visuals", "music-and-captures")
     identifiers = ("interface", "hud", "visuals", "music")
@@ -282,7 +282,9 @@ def features(site, copy, full_demo):
     for index, (label, description) in enumerate(copy["tiles"]):
         caption = tag("small", f"{index + 1:02d}") + tag("div", tag("h3", label) + tag("p", description))
         tiles.append(tag("a", feature_art(index, copy["preview"]) + tag("div", caption, class_="reference-tile__copy"), class_="reference-tile", href=site.url("docs/" + targets[index]), id=identifiers[index]))
-    lab = tag("details", tag("summary", icon("layout", 16) + text(studio) + icon("chevron-down", 14)) + full_demo, id="studio", class_="reference-lab")
+    status = tag("p", "", role="status", class_="reference-lab__status", data_studio_status=True)
+    panel = tag("div", status, data_studio_fragment=site.asset(f"data/studio.{site.language}.html"))
+    lab = tag("details", tag("summary", icon("layout", 16) + text(studio) + icon("chevron-down", 14)) + panel, id="studio", class_="reference-lab")
     return section_wrap("features", section_head(title, lead) + tag("div", join(tiles), class_="reference-tiles") + lab)
 
 
@@ -303,8 +305,8 @@ def pricing_section(site):
         checkout = tag("button", ("Pagar" if es else "Pay") + f" ${amount} →", class_="reference-button access-card__action", data_checkout=True, type="button")
         legal = tag("p", link("Condiciones del servicio" if es else "Terms of Service", site.url("legal/terms")), class_="payment-legal")
         plans.append(tag("article", heading + price + versions + items + tag("p", "— " + ("Método de pago" if es else "Payment method"), class_="payment-label") + options + checkout + legal, class_="access-card", data_plan=period, data_base_price=amount))
-    toggle = tag("div", join(tag("button", text(label), type="button", data_release=key, aria_pressed="true" if index == 0 else "false") for index, (key, label) in enumerate((("stable", "Stable" if not es else "Estable"), ("beta", "Beta")))), class_="access-toggle")
-    dialog = tag("dialog", tag("div", tag("h2", "Checkout" if not es else "Resumen de compra") + tag("button", "×", type="button", class_="portal-button", data_portal_action="close-checkout"), class_="studio-editor__head") + tag("p", "", data_checkout_summary=True) + tag("p", text(demo_note), class_="portal-note") + link("Profile" if not es else "Perfil", site.url("account"), "portal-button portal-button--white"), class_="studio-editor", data_checkout_dialog=True)
+    toggle = tag("div", join(tag("button", text(label) + tag("span", " · " + site.config["minecraft"]), type="button", data_release=key, aria_pressed="true" if index == 0 else "false") for index, (key, label) in enumerate((("stable", "Stable" if not es else "Estable"), ("beta", "Beta")))), class_="access-toggle")
+    dialog = tag("dialog", tag("div", tag("h2", "Checkout" if not es else "Resumen de compra") + tag("button", "×", type="button", class_="portal-button", data_portal_action="close-checkout"), class_="studio-editor__head") + tag("p", "", data_checkout_summary=True) + tag("p", text(demo_note), class_="portal-note") + link("Profile" if not es else "Perfil", site.url("account"), "portal-button portal-button--white"), class_="studio-editor", data_checkout_dialog=True, aria_label="Checkout" if not es else "Resumen de compra")
     return section_wrap("pricing", section_head(title, lead) + toggle + tag("div", join(plans), class_="access-grid") + tag("p", text(demo_note), class_="access-note") + dialog)
 
 
@@ -320,15 +322,20 @@ def help_section(site, copy):
     return section_wrap("contact", section_head(*copy["help"]) + tag("div", tag("div", support, class_="reference-supports") + tag("div", faq, class_="reference-faq"), class_="reference-help"))
 
 
-def build_landing(site, modules, stats, translate, demo, landing):
+def build_studio_fragment(site, modules, stats, translate, demo, landing):
     content = resolve_values(landing, landing_values(site.config, modules, stats))
-    copy = COPY[site.language]
-    lab = demo_section(site, content["demo"], modules, translate, demo, site.language, identifier="studio-demo")
     return join((
-        hero(site, copy),
-        features(site, copy, lab),
-        tag("div", pricing_section(site), id="project"),
-        help_section(site, copy),
+        demo_section(site, content["demo"], modules, translate, demo, site.language, identifier="studio-demo"),
         control_templates(demo["gui"]),
         json_script("demo-strings", {key: demo[key] for key in ("gui", "hud", "kill", "recordings")}),
+    ))
+
+
+def build_landing(site):
+    copy = COPY[site.language]
+    return join((
+        hero(site, copy),
+        features(site, copy),
+        tag("div", pricing_section(site), id="project"),
+        help_section(site, copy),
     ))
