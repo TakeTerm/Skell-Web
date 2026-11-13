@@ -20,7 +20,8 @@ from builder.content import (
     substitute,
 )
 from builder.docs import build_doc, build_docs_index
-from builder.landing import build_landing, resolve_values
+from builder.frontpage import build_landing
+from builder.landing import resolve_values
 from builder.layout import Site, page
 from builder.markup import tag
 
@@ -29,9 +30,10 @@ SOURCE = ROOT / "src"
 STYLESHEETS = {
     "site.css": ["base.css", "components.css", "layout.css", "landing.css", "skell-ui.css", "demos.css"],
     "docs.css": ["docs.css"],
+    "frontpage.css": ["frontpage.css", "preview.css"],
 }
-LANDING_STYLES = ["site.css"]
-LANDING_SCRIPTS = ["scripts/main.js"]
+LANDING_STYLES = ["site.css", "frontpage.css"]
+LANDING_SCRIPTS = ["scripts/main.js", "scripts/frontpage.js"]
 NOT_FOUND = {
     "en": ("Page not found", "That page does not exist. Head back to the start.", "Back to Skell Client"),
     "es": ("Página no encontrada", "Esa página no existe. Vuelve al inicio.", "Volver a Skell Client"),

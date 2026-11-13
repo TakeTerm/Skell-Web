@@ -13,17 +13,17 @@
   <a href="#repository-structure">Source structure</a>
 </p>
 
-![Skell Client homepage with the interactive mods menu preview](readme/hero.png)
+![Skell Client homepage with the interactive mods menu preview](readme/hero.jpg)
 
 ## Overview
 
 I built Skell Web to give players a clear introduction to Skell Client, my independently developed Fabric client for Minecraft. The site brings the product overview, interactive interface previews, and user guides together so visitors can understand the client and try its main controls before installing it.
 
-This repository contains the website for Skell Client **0.15.1**. I designed the presentation around the client’s glass-style interface and customizable HUD. The landing page explains how the interface, visuals, cosmetics, music, captures, and utilities fit into the client. Each section links to the guide that covers the feature in more detail.
+This repository contains the website for Skell Client **0.15.1**. I designed the landing page around a monochrome backdrop and an interactive settings panel, with direct access to the browser demos and guides. The landing page explains how the interface, visuals, cosmetics, music, captures, and utilities fit into the client. Each section links to the guide that covers the feature in more detail.
 
 ## Interactive preview
 
-I recreated key parts of the client interface for the browser and used the same module catalog to populate the mods menu. The preview is intended to show how settings are organized and how common interactions feel. Game-dependent visuals, including the kill effects, are approximated in the browser.
+I built the settings preview at the top of the homepage with category filters, a search box, favourites, light and dark themes, and display controls. In the interactive studio below the features, I use the same module catalog to populate the full mods menu. The preview is intended to show how settings are organized and how common interactions feel. Game-dependent visuals, including the kill effects, are approximated in the browser.
 
 | Preview | What I made available in the browser |
 | --- | --- |
@@ -56,8 +56,8 @@ I organized the documentation by task, from getting started and learning the con
 I maintain English and Spanish editions of the landing page and documentation. English is served at `/` and Spanish at `/es/`. I also designed the navigation for narrow screens and included reduced-motion styles for visitors who prefer them.
 
 <p align="center">
-  <img src="readme/hero-es.png" width="59%" alt="Spanish edition of the Skell Client homepage">
-  <img src="readme/mobile-hero.png" width="18%" alt="Skell Client homepage on a phone">
+  <img src="readme/hero-es.jpg" width="59%" alt="Spanish edition of the Skell Client homepage">
+  <img src="readme/mobile-hero.jpg" width="18%" alt="Skell Client homepage on a phone">
   <img src="readme/mobile-docs.png" width="18%" alt="Skell Client documentation on a phone">
 </p>
 

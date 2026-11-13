@@ -97,6 +97,10 @@ def header(site, page, active_section):
         ("docs", site.url("docs")),
         ("project", site.url("home") + "#project"),
     ]
+    if page == "home":
+        from .frontpage import landing_header
+
+        return landing_header(site)
     anchors = join(
         tag(
             "a",
@@ -246,7 +250,7 @@ def page(site, key, title, description, body, styles, scripts, active_section=""
             tag("a", site.interface["skip"], class_="skip-link", href="#main"),
             tag("div", "", class_="backdrop"),
             header(site, key, active_section),
-            mobile_menu(site, key, active_section),
+            mobile_menu(site, key, active_section) if key != "home" else "",
             tag("main", body, id="main", class_=main_class),
             footer(site),
             join(tag("script", "", type="module", src=f"/assets/{name}") for name in scripts),
